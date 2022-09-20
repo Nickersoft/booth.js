@@ -1,12 +1,35 @@
 class AudioRecorder {
+  /**
+   * The live audio context
+   */
   private context?: AudioContext;
+
+  /**
+   * Dictionary of event listeners associated with the recorder
+   */
   private listeners?: Record<string, (...args: any) => void>;
-  private recordedChunks?: Blob[] = [];
+
+  /**
+   * Buffer of currently recorded blob chunks
+   */
+  private buffer?: Blob[] = [];
+
+  /**
+   * Underlying media recorder object
+   */
   private recorder?: MediaRecorder;
+
+  /**
+   * The currently active media stream
+   */
   private activeStream?: MediaStream;
 
   constructor(private options: MediaRecorderOptions) {}
 
+  /**
+   * Starts recording audio using the given device ID or, if none is provided, the default device
+   * @param deviceId Optional device ID to record with
+   */
   async start(deviceId?: string) {
     this.prepareContext();
 
@@ -15,6 +38,10 @@ class AudioRecorder {
     this.recorder.start();
   }
 
+  /**
+   * Stops recording
+   * @returns The recorded data as a Blob object
+   */
   stop() {
     return new Promise((resolve) => {
       // Wait for the audio to stop and for the data to be available
@@ -41,18 +68,30 @@ class AudioRecorder {
    * @returns The recorded chunks as a single
    */
   private flushData() {
-    const blob = new Blob(this.recordedChunks);
-    this.recordedChunks = [];
+    const blob = new Blob(this.buffer);
+    this.buffer = [];
     return blob;
   }
 
-  private getAudioStream(deviceId?: string) {
+  /**
+   * Gets a new audio stream using either the given device ID or the default device
+   * if none is provided
+   * @param deviceId An optional device ID
+   * @returns The MediaStream object
+   */
+  private getAudioStream(deviceId?: string): Promise<MediaStream> {
     return navigator.mediaDevices.getUserMedia({
       audio: deviceId ? { deviceId } : true,
       video: false,
     });
   }
 
+  /**
+   * Initializes a new audio recorder with the correct event listeners attached
+   * @param stream The MediaStream object for which to create the recorder
+   * @param options Recorder options
+   * @returns
+   */
   private createAudioRecorder(
     stream: MediaStream,
     options: MediaRecorderOptions
@@ -61,13 +100,16 @@ class AudioRecorder {
 
     recorder.addEventListener("dataavailable", (e) => {
       if (e.data.size > 0) {
-        this.recordedChunks?.push(e.data);
+        this.buffer?.push(e.data);
       }
     });
 
     return recorder;
   }
 
+  /**
+   * Creates a new audio context if none exists, otherwise resumes the existing one
+   */
   private prepareContext() {
     if (!this.context) {
       this.context = new AudioContext();
