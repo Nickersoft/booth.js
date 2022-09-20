@@ -7,12 +7,16 @@
     <button id="start">Start</button>
     <button id="stop">Stop</button>
 
-    <script src="../dist/recorder.js"></script>
+    <script src="../dist/record.js"></script>
     <script> 
-      var record = new AudioRecorder();
+      var record = new RecordJS.AudioRecorder();
 
       document.getElementById("start").addEventListener('click', function() {  
         record.start();
+
+        record.on('volumechange', ({ volume }) => {
+          console.log(volume);
+        })
       });
 
       document.getElementById("stop").addEventListener('click', function() {

@@ -1,4 +1,11 @@
-class AudioRecorder {
+import type {
+  AudioEventListener,
+  AudioEventListenerMap,
+  AudioEventListeners,
+  AudioRecorderOptions,
+} from "./types";
+
+export class AudioRecorder {
   /**
    * The live audio context
    */
@@ -7,7 +14,7 @@ class AudioRecorder {
   /**
    * Dictionary of event listeners associated with the recorder
    */
-  private listeners?: Record<string, (...args: any) => void>;
+  private listeners: AudioEventListeners = {};
 
   /**
    * Buffer of currently recorded blob chunks
@@ -22,19 +29,16 @@ class AudioRecorder {
   /**
    * The currently active media stream
    */
-  private activeStream?: MediaStream;
+  private stream?: MediaStream;
 
-  constructor(private options: MediaRecorderOptions) {}
+  constructor(private options: AudioRecorderOptions) {}
 
   /**
    * Starts recording audio using the given device ID or, if none is provided, the default device
    * @param deviceId Optional device ID to record with
    */
   async start(deviceId?: string) {
-    this.prepareContext();
-
-    this.activeStream = await this.getAudioStream(deviceId);
-    this.recorder = this.createAudioRecorder(this.activeStream, this.options);
+    this.recorder = await this.createAudioRecorder();
     this.recorder.start();
   }
 
@@ -45,10 +49,10 @@ class AudioRecorder {
   stop() {
     return new Promise((resolve) => {
       // Wait for the audio to stop and for the data to be available
-      this.recorder?.addEventListener("stop", () => resolve(this.flushData()));
+      this.recorder?.addEventListener("stop", () => resolve(this.flush()));
       this.recorder?.stop();
       this.context?.suspend();
-      this.activeStream?.getTracks().forEach((track) => track.stop());
+      this.stream?.getTracks().forEach((track) => track.stop());
     });
   }
 
@@ -56,21 +60,32 @@ class AudioRecorder {
    * Lists all of the users available audio devices
    * @returns The list of Device objects
    */
-  listDevices() {
+  static listDevices() {
     return navigator.mediaDevices
       .enumerateDevices()
       .then((list) => list.filter((d) => d.kind === "audioinput"));
   }
 
   /**
-   * Clears the currently recorded chunks and returns the existing
-   * chunks as a single blob object
-   * @returns The recorded chunks as a single
+   * Attaches an event listener to the recorder
+   * @param eventName The name of the event
+   * @param callback The callback
    */
-  private flushData() {
-    const blob = new Blob(this.buffer);
-    this.buffer = [];
-    return blob;
+  on<T extends keyof AudioEventListenerMap>(
+    eventName: T,
+    callback: AudioEventListener<AudioEventListenerMap[T]>
+  ) {
+    if (!this.listeners[eventName]) {
+      this.listeners[eventName] = [];
+    }
+
+    switch (eventName) {
+      case "volumechange":
+        this.setupAudioMeter();
+        return;
+    }
+
+    this.listeners[eventName]?.push(callback);
   }
 
   /**
@@ -79,11 +94,22 @@ class AudioRecorder {
    * @param deviceId An optional device ID
    * @returns The MediaStream object
    */
-  private getAudioStream(deviceId?: string): Promise<MediaStream> {
+  setStream(deviceId?: string): Promise<MediaStream> {
     return navigator.mediaDevices.getUserMedia({
       audio: deviceId ? { deviceId } : true,
       video: false,
     });
+  }
+
+  /**
+   * Clears the currently recorded chunks and returns the existing
+   * chunks as a single blob object
+   * @returns The recorded chunks as a single
+   */
+  private flush() {
+    const blob = new Blob(this.buffer);
+    this.buffer = [];
+    return blob;
   }
 
   /**
@@ -92,11 +118,9 @@ class AudioRecorder {
    * @param options Recorder options
    * @returns
    */
-  private createAudioRecorder(
-    stream: MediaStream,
-    options: MediaRecorderOptions
-  ) {
-    const recorder = new MediaRecorder(stream, options);
+  private async createAudioRecorder() {
+    const stream = await this.getAudioStream();
+    const recorder = new MediaRecorder(stream, this.options);
 
     recorder.addEventListener("dataavailable", (e) => {
       if (e.data.size > 0) {
@@ -107,56 +131,42 @@ class AudioRecorder {
     return recorder;
   }
 
-  /**
-   * Creates a new audio context if none exists, otherwise resumes the existing one
-   */
-  private prepareContext() {
+  private fireEvent<T extends keyof AudioEventListenerMap>(
+    name: T,
+    event: AudioEventListenerMap[T]
+  ) {
+    this.listeners[name]?.forEach((listener) => listener(event));
+  }
+
+  private async getAudioStream() {
+    if (!this.stream) {
+      this.stream = await this.setStream();
+    }
+    return this.stream!;
+  }
+
+  private getAudioContext() {
     if (!this.context) {
       this.context = new AudioContext();
-    } else {
-      this.context.resume();
     }
+    return this.context!;
+  }
+
+  private async setupAudioMeter() {
+    const context = this.getAudioContext();
+    const stream = await this.getAudioStream();
+
+    await context.audioWorklet.addModule(
+      "processors/volume-meter-processor.js"
+    );
+
+    const name = "volume-meter";
+    const micNode = context.createMediaStreamSource(stream);
+    const volumeMeterNode = new AudioWorkletNode(context, name);
+
+    volumeMeterNode.port.onmessage = ({ data: volume }) =>
+      this.fireEvent("volumechange", { volume });
+
+    micNode.connect(volumeMeterNode).connect(context.destination);
   }
 }
-
-// const context = new AudioContext();
-
-// const handleSuccess = async function (stream: MediaStream) {
-//   const options = { mimeType: 'audio/webm' };
-//   const recordedChunks = [];
-//   const mediaRecorder = new MediaRecorder(stream, options);
-
-//   mediaRecorder.addEventListener('stop', function () {
-//     // downloadLink.href = URL.createObjectURL(new Blob(recordedChunks));
-//     // downloadLink.download = 'acetest.wav';
-//     console.log(recordedChunks);
-//   });
-
-//   // stopButton.addEventListener('click', function () {
-//   // 	mediaRecorder.stop();
-//   // });
-
-//   mediaRecorder.start();
-
-//   await context.audioWorklet.addModule('/volume-meter-processor.js');
-
-//   const micNode = context.createMediaStreamSource(stream);
-//   const volumeMeterNode = new AudioWorkletNode(context, 'volume-meter');
-
-//   volumeMeterNode.port.onmessage = ({ data: level }) => {
-//     phase += phaseShift;
-//     amplitude = Math.max(level * 1.5, idleAmplitude);
-//     window.requestAnimationFrame(draw);
-//   };
-
-//   setTimeout(() => {
-//     mediaRecorder.stop();
-//     context.suspend();
-//     stream.getTracks().forEach((track) => track.stop());
-//   }, 10000);
-
-//   micNode.connect(volumeMeterNode).connect(context.destination);
-// };
-
-// .then(handleSuccess);
-// }
