@@ -154,7 +154,7 @@ export class AudioRecorder {
 
     await context.audioWorklet.addModule(
       // TODO: there's gotta be a better way to do this
-      "/volume-meter-processor.js"
+      "https://raw.githubusercontent.com/Nickersoft/record.js/main/src/volume-meter-processor.js"
     );
 
     const name = "volume-meter";
