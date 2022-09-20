@@ -152,10 +152,7 @@ export class AudioRecorder {
     const context = this.getAudioContext();
     const stream = await this.getAudioStream();
 
-    await context.audioWorklet.addModule(
-      // TODO: there's gotta be a better way to do this
-      "https://raw.githubusercontent.com/Nickersoft/record.js/main/src/volume-meter-processor.js"
-    );
+    await context.audioWorklet.addModule("processors/volume-meter.js");
 
     const name = "volume-meter";
     const micNode = context.createMediaStreamSource(stream);

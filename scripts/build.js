@@ -1,5 +1,5 @@
 const { glob } = require("glob");
-
+const { cp } = require("shelljs");
 const { build } = require("esbuild");
 
 async function buildESM() {
@@ -34,5 +34,11 @@ async function buildIIEF() {
     globalName: "RecordJS",
   });
 }
+
+// async function copyResources() {
+//   cp("-rf", "./src/processors", "./dist/cjs");
+//   cp("-rf", "./src/processors", "./dist/esm");
+//   cp("-rf", "./src/processors", "./dist/cjs");
+// }
 
 Promise.all([buildESM(), buildCJS(), buildIIEF()]);
