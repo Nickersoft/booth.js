@@ -6,6 +6,9 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prepare": "yarn clean && yarn build",
     "build": "concurrently \"node scripts/build.js\" \"tsc\"",
