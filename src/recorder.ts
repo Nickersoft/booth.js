@@ -38,8 +38,10 @@ export class AudioRecorder {
    * @param deviceId Optional device ID to record with
    */
   async start(deviceId?: string) {
-    this.recorder = await this.createAudioRecorder();
-    this.recorder.start();
+    await this.setupAudioMeter();
+
+    // this.recorder = await this.createAudioRecorder();
+    // this.recorder.start();
   }
 
   /**
@@ -77,12 +79,6 @@ export class AudioRecorder {
   ) {
     if (!this.listeners[eventName]) {
       this.listeners[eventName] = [];
-    }
-
-    switch (eventName) {
-      case "volumechange":
-        this.setupAudioMeter();
-        return;
     }
 
     this.listeners[eventName]?.push(callback);
@@ -158,7 +154,7 @@ export class AudioRecorder {
 
     await context.audioWorklet.addModule(
       // TODO: there's gotta be a better way to do this
-      "https://raw.githubusercontent.com/Nickersoft/record.js/main/src/processors/volume-meter-processor.js"
+      "/volume-meter-processor.js"
     );
 
     const name = "volume-meter";
