@@ -1,0 +1,23 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <title>Record.js Demo</title>
+  </head>
+  <body> 
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+
+    <script src="../dist/recorder.js"></script>
+    <script> 
+      var record = new AudioRecorder();
+
+      document.getElementById("start").addEventListener('click', function() {  
+        record.start();
+      });
+
+      document.getElementById("stop").addEventListener('click', function() {
+        record.stop().then(x => console.log(x));
+      });
+    </script>
+  </body>
+</html>
