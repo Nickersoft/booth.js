@@ -3,7 +3,9 @@ import type {
 	AudioEventListenerMap,
 	AudioEventListeners,
 	AudioRecorderOptions,
+	InstallWorkletVars,
 } from "./types.js";
+import {getUserMedia} from "./utils.js";
 
 export class AudioRecorder {
 	/**
@@ -74,6 +76,28 @@ export class AudioRecorder {
 	}
 
 	/**
+	 * Installs a custom audio worklet to the current audio context
+	 *
+	 * @param name The registered name of the worklet
+	 * @param path The absolute path to the worklet
+	 * @param callback A registration callback containing the current audio context, audio stream, and worklet node
+	 */
+	async installWorklet(
+		name: string,
+		path: string,
+		callback: (args: InstallWorkletVars) => void | Promise<void>,
+	) {
+		const context = this.getAudioContext();
+		const stream = await this.getAudioStream();
+
+		await context.audioWorklet.addModule(path);
+
+		const node = new AudioWorkletNode(context, name);
+
+		await callback({context, stream, node});
+	}
+
+	/**
 	 * Attaches an event listener to the recorder
 	 * @param eventName The name of the event
 	 * @param callback The callback
@@ -87,19 +111,6 @@ export class AudioRecorder {
 		}
 
 		this.listeners[eventName]?.push(callback);
-	}
-
-	/**
-	 * Gets a new audio stream using either the given device ID or the default device
-	 * if none is provided
-	 * @param deviceId An optional device ID
-	 * @returns The MediaStream object
-	 */
-	async setStream(deviceId?: string): Promise<MediaStream> {
-		return navigator.mediaDevices.getUserMedia({
-			audio: deviceId ? {deviceId} : true,
-			video: false,
-		});
 	}
 
 	/**
@@ -137,6 +148,12 @@ export class AudioRecorder {
 		return recorder;
 	}
 
+	/**
+	 * Triggers an event
+	 *
+	 * @param name Event name to trigger
+	 * @param event Event payload (if any)
+	 */
 	private fireEvent<T extends keyof AudioEventListenerMap>(
 		name: T,
 		event: AudioEventListenerMap[T],
@@ -146,15 +163,25 @@ export class AudioRecorder {
 		}
 	}
 
-	private async getAudioStream() {
+	/**
+	 * Returns the active audio stream or creates one if one doesn't exist
+	 *
+	 * @returns The MediaStream object
+	 */
+	private async getAudioStream(): Promise<MediaStream> {
 		if (!this.stream) {
-			this.stream = await this.setStream();
+			this.stream = await getUserMedia();
 		}
 
 		return this.stream;
 	}
 
-	private getAudioContext() {
+	/**
+	 * Returns the active audio context or creates one if one doesn't exist
+	 *
+	 * @returns The AudioContext object
+	 */
+	private getAudioContext(): AudioContext {
 		if (!this.context) {
 			this.context = new AudioContext();
 		}
@@ -162,29 +189,36 @@ export class AudioRecorder {
 		return this.context;
 	}
 
-	private getWorkletPath(name: string) {
-		return [this.options.workletPath ?? "worklets", "volume-meter.js"].join(
-			"/",
-		);
+	/**
+	 * Resolves the path to the worklet with the specified name
+	 * using the global options
+	 *
+	 * @param name The filename of the worklet to resolve
+	 * @returns The absolute path to the worklet
+	 */
+	private getWorkletPath(name: string): string {
+		return [this.options.workletPath ?? "worklets", name].join("/");
 	}
 
-	private async setupAudioMeter() {
-		const context = this.getAudioContext();
-		const stream = await this.getAudioStream();
+	/**
+	 * Sets up audio metering if a volumechange listener is attached
+	 */
+	private async setupAudioMeter(): Promise<void> {
+		return this.installWorklet(
+			"volume-meter",
+			this.getWorkletPath("video-meter.js"),
+			({node, context, stream}) => {
+				const micNode = context.createMediaStreamSource(stream);
 
-		await context.audioWorklet.addModule(this.getWorkletPath("video-meter.js"));
+				node.port.addEventListener(
+					"message",
+					({data: volume}: {data: number}) => {
+						this.fireEvent("volumechange", {volume});
+					},
+				);
 
-		const name = "volume-meter";
-		const micNode = context.createMediaStreamSource(stream);
-		const volumeMeterNode = new AudioWorkletNode(context, name);
-
-		volumeMeterNode.port.addEventListener(
-			"message",
-			({data: volume}: {data: number}) => {
-				this.fireEvent("volumechange", {volume});
+				micNode.connect(node).connect(context.destination);
 			},
 		);
-
-		micNode.connect(volumeMeterNode).connect(context.destination);
 	}
 }

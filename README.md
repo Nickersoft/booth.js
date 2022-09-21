@@ -14,7 +14,7 @@
 
 ---
 
-BoothJS (or booth.js) is a zero-dependency wrapper around the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) that makes recording audio on the web _super easy_. 
+BoothJS (or booth.js) is a zero-dependency, extensible wrapper around the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) that makes recording audio on the web _super easy_. 
 
 Booth fully supports ESM, CJS & TypeScript, and can even be imported with one file (`booth.js`).
 
@@ -102,6 +102,31 @@ recorder.on('volumechange', ({ volume }) => {
 ```
 
 Booth also supports a few other event listeners, such as `stop` and `start`.
+
+## 🧰 Extending Using Custom Worklets
+
+Booth also supports custom worklets in case it doesn't do everything you need out-of-the-box. Let's take a look at registering a custom worklet that prints its data whenever it dispatches a new message:
+
+```typescript
+recorder.installWorklet(
+  "my-custom-worklet",
+  "/worklets/my-custom-worklet.js",
+  ({ node, context, stream }) => {
+    const micNode = context.createMediaStreamSource(stream);
+
+    node.port.addEventListener(
+      "message",
+      ({ data }) => {
+        console.log("Received new worklet data: " + JSON.stringify(data));
+      }
+    );
+
+    micNode.connect(node).connect(context.destination);
+  }
+);
+```
+
+Keep in mind, Booth doesn't support custom events yet (using `on`), but might in the future!
 
 ## 🙋‍♀️ FAQs
 

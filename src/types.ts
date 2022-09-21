@@ -4,6 +4,12 @@ type VolumeChangeEvent = {
 	volume: Volume;
 };
 
+export type InstallWorkletVars = {
+	context: AudioContext;
+	stream: MediaStream;
+	node: AudioWorkletNode;
+};
+
 export type AudioRecorderOptions = {
 	deviceId?: string;
 	workletPath?: string;
