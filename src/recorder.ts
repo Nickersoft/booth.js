@@ -31,7 +31,7 @@ export class AudioRecorder {
    */
   private stream?: MediaStream;
 
-  constructor(private options: AudioRecorderOptions) {}
+  constructor(private options: AudioRecorderOptions = {}) {}
 
   /**
    * Starts recording audio using the given device ID or, if none is provided, the default device
@@ -148,11 +148,16 @@ export class AudioRecorder {
     return this.context!;
   }
 
+  private getWorkletPath(name: string) {
+    return [this.options.workletPath ?? "worklets", "volume-meter.js"].join(
+      "/"
+    );
+  }
   private async setupAudioMeter() {
     const context = this.getAudioContext();
     const stream = await this.getAudioStream();
 
-    await context.audioWorklet.addModule("processors/volume-meter.js");
+    await context.audioWorklet.addModule(this.getWorkletPath("video-meter.js"));
 
     const name = "volume-meter";
     const micNode = context.createMediaStreamSource(stream);

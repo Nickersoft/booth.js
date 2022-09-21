@@ -6,6 +6,7 @@ interface VolumeChangeEvent {
 
 export interface AudioRecorderOptions extends MediaRecorderOptions {
   deviceId?: string;
+  workletPath?: string;
 }
 
 export interface AudioEventListenerMap {

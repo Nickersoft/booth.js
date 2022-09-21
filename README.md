@@ -4,7 +4,7 @@
 
 ---
 
-RecordJS (or record.js) is a thin wrapper around the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) that makes recording audio on the web _super easy_. 
+RecordJS (or record.js) is a zero-dependency wrapper around the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) that makes recording audio on the web _super easy_. 
 
 Record fully supports ESM, CJS & TypeScript, and can even be imported with one file (`record.js`).
 
@@ -28,11 +28,47 @@ console.log(data);
 
 Wasn't that easy?
 
+## Installing
+
+Getting up and running with Record is as simple as:
+
+```bash
+$ npm install record.js
+```
+
+Or, if you use [Yarn](https://yarnpkg.com):
+
+```bash
+$ yarn add record.js
+```
+
+### Dealing with Bundlers
+
+Seeing the new Audio Worklets API loads JavaScript files asynchronously for some dumb reason, there's a chance you may need to manually specify a worklets directory in order for Record to function correctly. By default, Record will just look in the relative path for worklets. 
+
+However, in the case in which you're using a bundler like [Vite](https://vitejs.dev), you'll probably need to update the [`assetsInclude` config option](https://vitejs.dev/config/shared-options.html#assetsinclude) to contain Record's worklets:
+
+```typescript
+{
+  assetsInclude: ['./node_modules/record.js/dist/worklets/cjs'],
+}
+```
+
+Then, you can point Record to this directory:
+
+```typescript
+const recorder = new AudioRecorder({
+  workletPath: '/node_modules/record.js/dist/worklets/cjs' 
+});
+```
+
+Sucks, I know, but it's necessary.
+
 ## Motivation
 
-In case you aren't sold on why this is needed, let me be blunt: managing audio on the web is _hard_, especially because of how new the technology is. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
+In case you aren't sold on why this is needed, let me be frank: recording audio on the web is _much_ harder than it should be. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
 
-A little while ago, the Google Chrome team announced support for [Audio Worklets](https://developer.chrome.com/blog/audio-worklet/), a new way to manage web audio that was built to replace the [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode). RecordJS uses Audio Worklets out-of-the-box, whereas older, similar libraries still rely mostly on ScriptProcessorNodes.  
+A little while ago (as in 5+ years ago), the Google Chrome team announced support for [Audio Worklets](https://developer.chrome.com/blog/audio-worklet/), a new way to manage web audio that was built to replace the [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode). RecordJS uses Audio Worklets out-of-the-box, whereas older, similar libraries still rely mostly on ScriptProcessorNodes.  
 
 ### An Important Note
 
