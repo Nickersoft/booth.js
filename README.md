@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.png" width="100%" />
+  <img src="https://github.com/Nickersoft/booth.js/raw/main/logo.png" width="100%" />
 </div>
 
 ---
