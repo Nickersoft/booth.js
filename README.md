@@ -102,6 +102,10 @@ recorder.on('volumechange', ({ volume }) => {
 
 Booth also supports a few other event listeners, such as `stop` and `start`.
 
+## The Name
+
+I originally wanted to name this project record.js, as I thought it sounded much cooler, but apparently NPM won't let you create packages that are too similar to other packages. Seeing record-js and recordjs beat me out, I settled for booth, as in [isolation booth](https://en.wikipedia.org/wiki/Recording_studio#Isolation_booth).
+
 ## Future Plans
 
 This library came out of my own needs for web audio, so it will be definitely maintained for the time being. I'd like to see it eventually grow to encapsulate other kinds of web media management, such as video and screen recording as well.
