@@ -1,13 +1,24 @@
-import {describe, expect, it, jest} from "@jest/globals";
+import { beforeAll, describe, expect, it, jest } from "@jest/globals";
 
-import {AudioRecorder} from "../src/recorder.js";
+import { AudioRecorder } from "../src/recorder.js";
+import { MockMediaRecorder } from "./__mocks__/mock-recorder.js";
 
 describe("AudioRecorder", () => {
-	it("works", () => {
-		const recorder = new AudioRecorder();
+  beforeAll(() => {
+    window.MediaRecorder = MockMediaRecorder;
+    Object.defineProperty(global.navigator, "mediaDevices", {
+      value: {
+        getUserMedia: jest.fn(),
+      },
+    });
+  });
 
-		console.log(recorder);
+  it("works", async () => {
+    const recorder = new AudioRecorder();
 
-		expect(recorder).toBeTruthy();
-	});
+    await recorder.start();
+
+    expect(recorder["recorder"]!.start).toHaveBeenCalled();
+    expect(global.navigator.mediaDevices.getUserMedia).toHaveBeenCalledTimes(1);
+  });
 });
