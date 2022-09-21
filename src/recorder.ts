@@ -217,6 +217,8 @@ export class AudioRecorder {
 					},
 				);
 
+				node.port.start();
+
 				micNode.connect(node).connect(context.destination);
 			},
 		);
