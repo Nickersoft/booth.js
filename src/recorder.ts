@@ -38,10 +38,8 @@ export class AudioRecorder {
    * @param deviceId Optional device ID to record with
    */
   async start(deviceId?: string) {
-    await this.setupAudioMeter();
-
-    // this.recorder = await this.createAudioRecorder();
-    // this.recorder.start();
+    this.recorder = await this.createAudioRecorder();
+    this.recorder.start();
   }
 
   /**
@@ -116,7 +114,12 @@ export class AudioRecorder {
    */
   private async createAudioRecorder() {
     const stream = await this.getAudioStream();
+
     const recorder = new MediaRecorder(stream, this.options);
+
+    if ("volumechange" in this.listeners) {
+      await this.setupAudioMeter();
+    }
 
     recorder.addEventListener("dataavailable", (e) => {
       if (e.data.size > 0) {
