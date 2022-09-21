@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "prepare": "yarn clean && yarn build",
+    "prepublishOnly": "yarn clean && yarn build",
     "build": "concurrently \"node scripts/build.cjs\" \"tsc --emitDeclarationOnly\"",
     "clean": "shx rm -rf dist",
     "postinstall": "husky install",
