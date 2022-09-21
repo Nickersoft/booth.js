@@ -26,19 +26,13 @@ async function buildCJS() {
 async function buildIIEF() {
   await build({
     entryPoints: ["src/index.ts"],
-    outfile: "dist/record.js",
+    outfile: "dist/booth.js",
     bundle: true,
     sourcemap: true,
     platform: "browser",
     target: "chrome58",
-    globalName: "RecordJS",
+    globalName: "BoothJS",
   });
 }
-
-// async function copyResources() {
-//   cp("-rf", "./src/processors", "./dist/cjs");
-//   cp("-rf", "./src/processors", "./dist/esm");
-//   cp("-rf", "./src/processors", "./dist/cjs");
-// }
 
 Promise.all([buildESM(), buildCJS(), buildIIEF()]);

@@ -1,30 +1,26 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Record.js Demo</title>
+    <title>booth.js Demo</title>
   </head>
-  <body> 
+  <body>
     <button id="start">Start</button>
     <button id="stop">Stop</button>
 
-    <script src="record.js"></script>
-    <script> 
-      var record = new RecordJS.AudioRecorder();
+    <script src="booth.js"></script>
+    <script>
+      var record = new BoothJS.AudioRecorder();
 
-      
-      document.getElementById("start").addEventListener('click', function() {  
-
-        record.on('volumechange', ({ volume }) => {
+      document.getElementById("start").addEventListener("click", function () {
+        record.on("volumechange", ({ volume }) => {
           console.log(volume);
-        })
-        
-        
-        record.start();
+        });
 
+        record.start();
       });
 
-      document.getElementById("stop").addEventListener('click', function() {
-        record.stop().then(x => console.log(x));
+      document.getElementById("stop").addEventListener("click", function () {
+        record.stop().then((x) => console.log(x));
       });
     </script>
   </body>
