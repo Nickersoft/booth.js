@@ -1,2 +1,2 @@
-export * from "./recorder";
-export * from "./types";
+export * from "./recorder.js";
+export * from "./types.js";

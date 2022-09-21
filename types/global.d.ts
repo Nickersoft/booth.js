@@ -23,11 +23,11 @@ interface AudioWorkletProcessorConstructor {
   new (options: any): AudioWorkletProcessorImpl;
 }
 
-declare var currentFrame: number;
+declare const currentFrame: number;
 
-declare var currentTime: number;
+declare const currentTime: number;
 
-declare var sampleRate: number;
+declare const sampleRate: number;
 
 declare function registerProcessor(
   name: string,

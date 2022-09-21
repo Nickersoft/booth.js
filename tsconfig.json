@@ -8,8 +8,7 @@
     "noImplicitAny": false,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "outDir": "dist/types",
-    "emitDeclarationOnly": true
+    "outDir": "dist/types"
   },
   "include": ["src/**/*", "types/**/*"]
 }

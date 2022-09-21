@@ -1,174 +1,190 @@
 import type {
-  AudioEventListener,
-  AudioEventListenerMap,
-  AudioEventListeners,
-  AudioRecorderOptions,
-} from "./types";
+	AudioEventListener,
+	AudioEventListenerMap,
+	AudioEventListeners,
+	AudioRecorderOptions,
+} from "./types.js";
 
 export class AudioRecorder {
-  /**
-   * The live audio context
-   */
-  private context?: AudioContext;
+	/**
+	 * Lists all of the users available audio devices
+	 * @returns The list of Device objects
+	 */
+	static async listDevices(): Promise<MediaDeviceInfo[]> {
+		return navigator.mediaDevices
+			.enumerateDevices()
+			.then((list) => list.filter((d) => d.kind === "audioinput"));
+	}
 
-  /**
-   * Dictionary of event listeners associated with the recorder
-   */
-  private listeners: AudioEventListeners = {};
+	/**
+	 * The live audio context
+	 */
+	private context?: AudioContext;
 
-  /**
-   * Buffer of currently recorded blob chunks
-   */
-  private buffer?: Blob[] = [];
+	/**
+	 * Dictionary of event listeners associated with the recorder
+	 */
+	private listeners: AudioEventListeners = {};
 
-  /**
-   * Underlying media recorder object
-   */
-  private recorder?: MediaRecorder;
+	/**
+	 * Buffer of currently recorded blob chunks
+	 */
+	private buffer?: Blob[] = [];
 
-  /**
-   * The currently active media stream
-   */
-  private stream?: MediaStream;
+	/**
+	 * Underlying media recorder object
+	 */
+	private recorder?: MediaRecorder;
 
-  constructor(private options: AudioRecorderOptions = {}) {}
+	/**
+	 * The currently active media stream
+	 */
+	private stream?: MediaStream;
 
-  /**
-   * Starts recording audio using the given device ID or, if none is provided, the default device
-   * @param deviceId Optional device ID to record with
-   */
-  async start(deviceId?: string) {
-    this.recorder = await this.createAudioRecorder();
-    this.recorder.start();
-  }
+	constructor(private readonly options: AudioRecorderOptions = {}) {}
 
-  /**
-   * Stops recording
-   * @returns The recorded data as a Blob object
-   */
-  stop() {
-    return new Promise((resolve) => {
-      // Wait for the audio to stop and for the data to be available
-      this.recorder?.addEventListener("stop", () => resolve(this.flush()));
-      this.recorder?.stop();
-      this.context?.suspend();
-      this.stream?.getTracks().forEach((track) => track.stop());
-    });
-  }
+	/**
+	 * Starts recording audio using the given device ID or, if none is provided, the default device
+	 * @param deviceId Optional device ID to record with
+	 */
+	async start(deviceId?: string): Promise<void> {
+		this.recorder = await this.createAudioRecorder();
+		this.recorder.start();
+	}
 
-  /**
-   * Lists all of the users available audio devices
-   * @returns The list of Device objects
-   */
-  static listDevices() {
-    return navigator.mediaDevices
-      .enumerateDevices()
-      .then((list) => list.filter((d) => d.kind === "audioinput"));
-  }
+	/**
+	 * Stops recording
+	 * @returns The recorded data as a Blob object
+	 */
+	async stop() {
+		return new Promise((resolve) => {
+			// Wait for the audio to stop and for the data to be available
+			this.recorder?.addEventListener("stop", () => {
+				resolve(this.flush());
+			});
 
-  /**
-   * Attaches an event listener to the recorder
-   * @param eventName The name of the event
-   * @param callback The callback
-   */
-  on<T extends keyof AudioEventListenerMap>(
-    eventName: T,
-    callback: AudioEventListener<AudioEventListenerMap[T]>
-  ) {
-    if (!this.listeners[eventName]) {
-      this.listeners[eventName] = [];
-    }
+			this.recorder?.stop();
 
-    this.listeners[eventName]?.push(callback);
-  }
+			void this.context?.suspend();
 
-  /**
-   * Gets a new audio stream using either the given device ID or the default device
-   * if none is provided
-   * @param deviceId An optional device ID
-   * @returns The MediaStream object
-   */
-  setStream(deviceId?: string): Promise<MediaStream> {
-    return navigator.mediaDevices.getUserMedia({
-      audio: deviceId ? { deviceId } : true,
-      video: false,
-    });
-  }
+			for (const track of this.stream?.getTracks() ?? []) {
+				track.stop();
+			}
+		});
+	}
 
-  /**
-   * Clears the currently recorded chunks and returns the existing
-   * chunks as a single blob object
-   * @returns The recorded chunks as a single
-   */
-  private flush() {
-    const blob = new Blob(this.buffer);
-    this.buffer = [];
-    return blob;
-  }
+	/**
+	 * Attaches an event listener to the recorder
+	 * @param eventName The name of the event
+	 * @param callback The callback
+	 */
+	on<T extends keyof AudioEventListenerMap>(
+		eventName: T,
+		callback: AudioEventListener<AudioEventListenerMap[T]>,
+	) {
+		if (!this.listeners[eventName]) {
+			this.listeners[eventName] = [];
+		}
 
-  /**
-   * Initializes a new audio recorder with the correct event listeners attached
-   * @param stream The MediaStream object for which to create the recorder
-   * @param options Recorder options
-   * @returns
-   */
-  private async createAudioRecorder() {
-    const stream = await this.getAudioStream();
+		this.listeners[eventName]?.push(callback);
+	}
 
-    const recorder = new MediaRecorder(stream, this.options);
+	/**
+	 * Gets a new audio stream using either the given device ID or the default device
+	 * if none is provided
+	 * @param deviceId An optional device ID
+	 * @returns The MediaStream object
+	 */
+	async setStream(deviceId?: string): Promise<MediaStream> {
+		return navigator.mediaDevices.getUserMedia({
+			audio: deviceId ? {deviceId} : true,
+			video: false,
+		});
+	}
 
-    if ("volumechange" in this.listeners) {
-      await this.setupAudioMeter();
-    }
+	/**
+	 * Clears the currently recorded chunks and returns the existing
+	 * chunks as a single blob object
+	 * @returns The recorded chunks as a single
+	 */
+	private flush() {
+		const blob = new Blob(this.buffer);
+		this.buffer = [];
+		return blob;
+	}
 
-    recorder.addEventListener("dataavailable", (e) => {
-      if (e.data.size > 0) {
-        this.buffer?.push(e.data);
-      }
-    });
+	/**
+	 * Initializes a new audio recorder with the correct event listeners attached
+	 * @param stream The MediaStream object for which to create the recorder
+	 * @param options Recorder options
+	 * @returns
+	 */
+	private async createAudioRecorder(): Promise<MediaRecorder> {
+		const stream = await this.getAudioStream();
 
-    return recorder;
-  }
+		const recorder = new MediaRecorder(stream, this.options);
 
-  private fireEvent<T extends keyof AudioEventListenerMap>(
-    name: T,
-    event: AudioEventListenerMap[T]
-  ) {
-    this.listeners[name]?.forEach((listener) => listener(event));
-  }
+		if ("volumechange" in this.listeners) {
+			await this.setupAudioMeter();
+		}
 
-  private async getAudioStream() {
-    if (!this.stream) {
-      this.stream = await this.setStream();
-    }
-    return this.stream!;
-  }
+		recorder.addEventListener("dataavailable", ({data}) => {
+			if (data.size > 0) {
+				this.buffer?.push(data);
+			}
+		});
 
-  private getAudioContext() {
-    if (!this.context) {
-      this.context = new AudioContext();
-    }
-    return this.context!;
-  }
+		return recorder;
+	}
 
-  private getWorkletPath(name: string) {
-    return [this.options.workletPath ?? "worklets", "volume-meter.js"].join(
-      "/"
-    );
-  }
-  private async setupAudioMeter() {
-    const context = this.getAudioContext();
-    const stream = await this.getAudioStream();
+	private fireEvent<T extends keyof AudioEventListenerMap>(
+		name: T,
+		event: AudioEventListenerMap[T],
+	) {
+		for (const listener of this.listeners?.[name] ?? []) {
+			listener(event);
+		}
+	}
 
-    await context.audioWorklet.addModule(this.getWorkletPath("video-meter.js"));
+	private async getAudioStream() {
+		if (!this.stream) {
+			this.stream = await this.setStream();
+		}
 
-    const name = "volume-meter";
-    const micNode = context.createMediaStreamSource(stream);
-    const volumeMeterNode = new AudioWorkletNode(context, name);
+		return this.stream;
+	}
 
-    volumeMeterNode.port.onmessage = ({ data: volume }) =>
-      this.fireEvent("volumechange", { volume });
+	private getAudioContext() {
+		if (!this.context) {
+			this.context = new AudioContext();
+		}
 
-    micNode.connect(volumeMeterNode).connect(context.destination);
-  }
+		return this.context;
+	}
+
+	private getWorkletPath(name: string) {
+		return [this.options.workletPath ?? "worklets", "volume-meter.js"].join(
+			"/",
+		);
+	}
+
+	private async setupAudioMeter() {
+		const context = this.getAudioContext();
+		const stream = await this.getAudioStream();
+
+		await context.audioWorklet.addModule(this.getWorkletPath("video-meter.js"));
+
+		const name = "volume-meter";
+		const micNode = context.createMediaStreamSource(stream);
+		const volumeMeterNode = new AudioWorkletNode(context, name);
+
+		volumeMeterNode.port.addEventListener(
+			"message",
+			({data: volume}: {data: number}) => {
+				this.fireEvent("volumechange", {volume});
+			},
+		);
+
+		micNode.connect(volumeMeterNode).connect(context.destination);
+	}
 }

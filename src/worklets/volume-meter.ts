@@ -4,9 +4,9 @@
 
 /* global currentTime */
 
-const SMOOTHING_FACTOR = 0.8;
-const FRAME_PER_SECOND = 60;
-const FRAME_INTERVAL = 1 / FRAME_PER_SECOND;
+const smoothingFactor = 0.8;
+const framePerSecond = 60;
+const frameInterval = 1 / framePerSecond;
 
 /**
  *  Measure microphone volume.
@@ -15,36 +15,36 @@ const FRAME_INTERVAL = 1 / FRAME_PER_SECOND;
  * @extends AudioWorkletProcessor
  */
 class VolumeMeter extends AudioWorkletProcessor {
-  private lastUpdate: number = currentTime;
-  private volume: number = 0;
+	private lastUpdate: number = currentTime;
+	private volume = 0;
 
-  calculateRMS(inputChannelData) {
-    // Calculate the squared-sum.
-    let sum = 0;
+	calculateRms(inputChannelData: Float32Array) {
+		// Calculate the squared-sum.
+		let sum = 0;
 
-    for (let i = 0; i < inputChannelData.length; i++) {
-      sum += inputChannelData[i] * inputChannelData[i];
-    }
+		for (const inputChannelDatum of inputChannelData) {
+			sum += inputChannelDatum * inputChannelDatum;
+		}
 
-    // Calculate the RMS level and update the volume.
-    let rms = Math.sqrt(sum / inputChannelData.length);
+		// Calculate the RMS level and update the volume.
+		const rms = Math.sqrt(sum / inputChannelData.length);
 
-    this.volume = Math.max(rms, this.volume * SMOOTHING_FACTOR);
-  }
+		this.volume = Math.max(rms, this.volume * smoothingFactor);
+	}
 
-  process(inputs, outputs) {
-    // This example only handles mono channel.
-    const inputChannelData = inputs[0][0];
+	process(inputs: Float32Array[][], outputs: Float32Array[][]) {
+		// This example only handles mono channel.
+		const inputChannelData = inputs[0][0];
 
-    // Post a message to the node every 16ms.
-    if (currentTime - this.lastUpdate > FRAME_INTERVAL) {
-      this.calculateRMS(inputChannelData);
-      this.port.postMessage(this.volume);
-      this.lastUpdate = currentTime;
-    }
+		// Post a message to the node every 16ms.
+		if (currentTime - this.lastUpdate > frameInterval) {
+			this.calculateRms(inputChannelData);
+			this.port.postMessage(this.volume);
+			this.lastUpdate = currentTime;
+		}
 
-    return true;
-  }
+		return true;
+	}
 }
 
 registerProcessor("volume-meter", VolumeMeter);
