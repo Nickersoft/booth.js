@@ -4,6 +4,12 @@
     <source media="(prefers-color-scheme: light)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="400px">
     <img alt="Booth.js Logo" src="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="400px">
   </picture>
+  <br/><br/>
+  
+  ![npm version](https://img.shields.io/npm/v/booth.js?style=flat-square)
+  ![dependencies](https://img.shields.io/librariesio/release/npm/booth.js?style=flat-square)
+  ![license](https://img.shields.io/npm/l/booth.js?style=flat-square)
+  ![minified size](https://img.shields.io/bundlephobia/minzip/booth.js?style=flat-square)
 </div>
 
 ---
