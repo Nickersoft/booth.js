@@ -8,42 +8,7 @@ RecordJS (or record.js) is a thin wrapper around the [Web Audio API](https://dev
 
 Record fully supports ESM, CJS & TypeScript, and can even be imported with one file (`record.js`).
 
-First, let's take a look at how you would record audio _without_ Record (courtesy of [this tutorial](https://web.dev/media-recording-audio/)):
-
-```typescript
-  // Setup a callback for our stream
-  const handleSuccess = function(stream) {
-
-    // Set up your options
-    const options = {mimeType: 'audio/webm'};
-
-    // Initialize a buffer
-    const recordedChunks = [];
-
-    // Create a new audio recording from the stream
-    const mediaRecorder = new MediaRecorder(stream, options);
-
-    // Load data into the buffer
-    mediaRecorder.addEventListener('dataavailable', function(e) {
-      if (e.data.size > 0) recordedChunks.push(e.data);
-    });
-
-    // Wait for the recorder to stop
-    mediaRecorder.addEventListener('stop', function() {
-      // Yay we have your recorded data!!
-      console.log(URL.createObjectURL(new Blob(recordedChunks)));
-    });
-
-    // Start the recorder
-    mediaRecorder.start();
-  };
-
-  // Get the user's media devices and trigger the callback
-  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-      .then(handleSuccess);
-```
-
-Whew, I'm exhausted from just _reading_ that. Now let's see how you'd write the same logic with Record:
+Instead of following  [super long tutorials](https://web.dev/media-recording-audio) on how to record on the web, just use RecordJS:
 
 ```typescript
 import { AudioRecorder } from 'record.js';
@@ -68,6 +33,10 @@ Wasn't that easy?
 In case you aren't sold on why this is needed, let me be blunt: managing audio on the web is _hard_, especially because of how new the technology is. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
 
 A little while ago, the Google Chrome team announced support for [Audio Worklets](https://developer.chrome.com/blog/audio-worklet/), a new way to manage web audio that was built to replace the [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode). RecordJS uses Audio Worklets out-of-the-box, whereas older, similar libraries still rely mostly on ScriptProcessorNodes.  
+
+### An Important Note
+
+Unlike Record's sister library [PushJS](https://github.com/Nickersoft/push.js), Record was created to provide a more intuitive way to use the Web Audio API, _not_ provide backwards-compatibility for it. There is no guarantee RecordJS will work on older browsers, _but_ if you need to fill the gap in some way, I encourage you to use Google's [audio worklet polyfill](https://github.com/GoogleChromeLabs/audioworklet-polyfill) for the time being.
 
 ## Finding & Using Devices
 
