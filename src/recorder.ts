@@ -206,7 +206,7 @@ export class AudioRecorder {
 	private async setupAudioMeter(): Promise<void> {
 		return this.installWorklet(
 			"volume-meter",
-			this.getWorkletPath("video-meter.js"),
+			this.getWorkletPath("volume-meter.js"),
 			({node, context, stream}) => {
 				const micNode = context.createMediaStreamSource(stream);
 
