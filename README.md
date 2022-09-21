@@ -1,5 +1,9 @@
 <div align="center">
-  <img src="https://github.com/Nickersoft/booth.js/raw/main/logo.png" width="100%" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/dark.svg" width="300px">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="300px">
+    <img alt="Booth.js Logo" src="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg">
+  </picture>
 </div>
 
 ---
