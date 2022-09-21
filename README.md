@@ -14,7 +14,7 @@
 
 ---
 
-BoothJS (or booth.js) is a zero-dependency, extensible wrapper around the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) that makes recording audio on the web _super easy_. 
+BoothJS (or booth.js) is a zero-dependency, extensible wrapper around the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) that makes recording audio on the web _super_ easy. 
 
 Booth fully supports ESM, CJS & TypeScript, and can even be imported with one file (`booth.js`).
 
