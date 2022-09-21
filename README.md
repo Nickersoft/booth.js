@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/dark.svg" width="400px">
     <source media="(prefers-color-scheme: light)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="400px">
-    <img alt="Booth.js Logo" src="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg">
+    <img alt="Booth.js Logo" src="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="400px">
   </picture>
 </div>
 
