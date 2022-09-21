@@ -1,10 +1,10 @@
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/dark.svg" width="400px">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="400px">
-    <img alt="Booth.js Logo" src="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="400px">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/dark.svg" width="500px">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="500px">
+    <img alt="Booth.js Logo" src="https://github.com/Nickersoft/booth.js/raw/main/images/light.svg" width="500px">
   </picture>
-  <br/><br/>
+  <br/>
   
   ![npm version](https://img.shields.io/npm/v/booth.js?style=flat-square)
   ![dependencies](https://img.shields.io/librariesio/release/npm/booth.js?style=flat-square)
