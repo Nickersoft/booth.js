@@ -32,7 +32,7 @@ console.log(data);
 
 Wasn't that easy?
 
-## Installing
+## 🚀 Installing
 
 Getting up and running with Booth is as simple as:
 
@@ -46,7 +46,7 @@ Or, if you use [Yarn](https://yarnpkg.com):
 $ yarn add booth.js
 ```
 
-### Dealing with Bundlers
+## 📦 Dealing with Bundlers
 
 Seeing the new Audio Worklets API loads JavaScript files asynchronously for some dumb reason, there's a chance you may need to manually specify a worklets directory in order for Booth to function correctly. By default, Booth will just look in the relative path for worklets. 
 
@@ -68,17 +68,8 @@ const recorder = new AudioRecorder({
 
 Sucks, I know, but it's necessary.
 
-## Motivation
 
-In case you aren't sold on why this is needed, let me be frank: recording audio on the web is _much_ harder than it should be. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
-
-A little while ago (as in 5+ years ago), the Google Chrome team announced support for [Audio Worklets](https://developer.chrome.com/blog/audio-worklet/), a new way to manage web audio that was built to replace the [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode). BoothJS uses Audio Worklets out-of-the-box, whereas older, similar libraries still rely mostly on ScriptProcessorNodes.  
-
-### An Important Note
-
-Unlike Booth's sister library [PushJS](https://github.com/Nickersoft/push.js), Booth was created to provide a more intuitive way to use the Web Audio API, _not_ provide backwards-compatibility for it. There is no guarantee BoothJS will work on older browsers, _but_ if you need to fill the gap in some way, I encourage you to use Google's [audio worklet polyfill](https://github.com/GoogleChromeLabs/audioworklet-polyfill) for the time being.
-
-## Finding & Using Devices
+## 🎙 Finding & Using Devices
 
 Even though calling `recorder.start()` will automatically create a stream for you using the default device, there's a chance you may want to use a different device if you have multiple devices plugged in. Fortunately, with Booth using one of these devices is super easy:
 
@@ -94,7 +85,7 @@ const recorder = new AudioRecorder({
 await recorder.start();
 ```
 
-## Monitoring Volume & Other Events
+## 🔊 Monitoring Volume & Other Events
 
 Booth supports a number of basic event listeners, including listening for volume changes. Instead of going through the extremely long code linked to earlier, you can monitor input volume using:
 
@@ -106,15 +97,32 @@ recorder.on('volumechange', ({ volume }) => {
 
 Booth also supports a few other event listeners, such as `stop` and `start`.
 
-## The Name
+## 🙋‍♀️ FAQs
+
+### "Why build this?"
+
+The short answer: it's 2022, and recording audio on the web is still _much_ harder than it should be. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
+
+A little while ago (as in 5+ years ago), the Google Chrome team announced support for [Audio Worklets](https://developer.chrome.com/blog/audio-worklet/), a new way to manage web audio that was built to replace the [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode). BoothJS uses Audio Worklets out-of-the-box, whereas older, similar libraries still rely mostly on ScriptProcessorNodes.  
+
+Yes, it's true this is not the first library to tackle this problem. It is, however, the newest and most up-to-date (see "Similar Projects" below).
+
+### "Why call it Booth?"
 
 I originally wanted to name this project record.js, as I thought it sounded much cooler, but apparently NPM won't let you create packages that are too similar to other packages. Seeing record-js and recordjs beat me out, I settled for booth, as in [isolation booth](https://en.wikipedia.org/wiki/Recording_studio#Isolation_booth).
 
-## Future Plans
+### "What's next?"
 
 This library came out of my own needs for web audio, so it will be definitely maintained for the time being. I'd like to see it eventually grow to encapsulate other kinds of web media management, such as video and screen recording as well.
 
-## Similar Projects
+
+## 🚨 An Important Note: 
+
+Unlike Booth's sister library [PushJS](https://github.com/Nickersoft/push.js), Booth was created to provide a more intuitive way to use the Web Audio API, _not_ provide backwards-compatibility for it. 
+
+There is no guarantee BoothJS will work on older browsers, _but_ if you need to fill the gap in some way, I encourage you to use Google's [audio worklet polyfill](https://github.com/GoogleChromeLabs/audioworklet-polyfill) for the time being.
+
+## ❤️ Similar Projects
 
 - **[RecordRTC](https://github.com/muaz-khan/RecordRTC)** (last published 2+ years ago)
 - **[recorderjs](https://github.com/mattdiamond/recorderjs)** (last published 8+ years ago)
