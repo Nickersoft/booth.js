@@ -1,6 +1,6 @@
 {
   "name": "booth.js",
-  "version": "0.0.1-rc7",
+  "version": "0.0.1-rc8",
   "license": "MIT",
   "packageManager": "yarn@3.2.3",
   "main": "dist/cjs/index.js",
