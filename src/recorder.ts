@@ -51,7 +51,7 @@ export class AudioRecorder {
    */
   async start(deviceId?: string): Promise<void> {
     this.recorder = await this.createAudioRecorder();
-    this.recorder.start();
+    this.recorder?.start();
   }
 
   /**
@@ -85,7 +85,7 @@ export class AudioRecorder {
   async installWorklet(
     name: string,
     path: string,
-    callback: (args: InstallWorkletVars) => void | Promise<void>,
+    callback: (args: InstallWorkletVars) => void | Promise<void>
   ) {
     const context = this.getAudioContext();
     const stream = await this.getAudioStream();
@@ -104,7 +104,7 @@ export class AudioRecorder {
    */
   on<T extends keyof AudioEventListenerMap>(
     eventName: T,
-    callback: AudioEventListener<AudioEventListenerMap[T]>,
+    callback: AudioEventListener<AudioEventListenerMap[T]>
   ) {
     if (!this.listeners[eventName]) {
       this.listeners[eventName] = [];
@@ -156,7 +156,7 @@ export class AudioRecorder {
    */
   private fireEvent<T extends keyof AudioEventListenerMap>(
     name: T,
-    event: AudioEventListenerMap[T],
+    event: AudioEventListenerMap[T]
   ) {
     for (const listener of this.listeners?.[name] ?? []) {
       listener(event);
@@ -214,13 +214,13 @@ export class AudioRecorder {
           "message",
           ({ data: volume }: { data: number }) => {
             this.fireEvent("volumechange", { volume });
-          },
+          }
         );
 
         node.port.start();
 
         micNode.connect(node).connect(context.destination);
-      },
+      }
     );
   }
 }

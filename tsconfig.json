@@ -10,5 +10,6 @@
     "moduleResolution": "node",
     "outDir": "dist/types"
   },
-  "include": ["src/**/*", "types/**/*"]
+  "include": ["src/**/*", "types/**/*", "tests/**/*"],
+  "exclude": ["dist/**/*"]
 }

@@ -1,8 +1,7 @@
 module.exports = {
   singleQuote: false,
-  useTabs: false,
   semi: true,
-  bracketSpacing: true,
+  importOrder: ["^[./]"],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
 };
