@@ -1,28 +1,28 @@
 type Volume = number;
 
 type VolumeChangeEvent = {
-	volume: Volume;
+  volume: Volume;
 };
 
 export type InstallWorkletVars = {
-	context: AudioContext;
-	stream: MediaStream;
-	node: AudioWorkletNode;
+  context: AudioContext;
+  stream: MediaStream;
+  node: AudioWorkletNode;
 };
 
 export type AudioRecorderOptions = {
-	deviceId?: string;
-	workletPath?: string;
+  deviceId?: string;
+  workletPath?: string;
 } & MediaRecorderOptions;
 
 export type AudioEventListenerMap = {
-	volumechange: VolumeChangeEvent;
+  volumechange: VolumeChangeEvent;
 };
 
 export type AudioEventListener<T> = (event: T) => void;
 
 export type AudioEventListeners = {
-	[k in keyof AudioEventListenerMap]?: Array<
-		AudioEventListener<AudioEventListenerMap[k]>
-	>;
+  [k in keyof AudioEventListenerMap]?: Array<
+    AudioEventListener<AudioEventListenerMap[k]>
+  >;
 };
