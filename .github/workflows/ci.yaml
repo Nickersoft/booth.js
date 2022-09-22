@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container: node:16
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint
+        run: yarn lint
+      - name: Run tsc
+        run: yarn check
+      - name: Run build
+        run: yarn build
