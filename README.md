@@ -10,6 +10,7 @@
   ![dependencies](https://img.shields.io/librariesio/release/npm/booth.js?style=flat-square)
   ![license](https://img.shields.io/npm/l/booth.js?style=flat-square)
   ![minified size](https://img.shields.io/bundlephobia/minzip/booth.js?style=flat-square)
+  ![build](https://img.shields.io/github/workflow/status/Nickersoft/booth.js/CI?style=flat-square)
 </div>
 
 ---
