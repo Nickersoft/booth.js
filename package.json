@@ -45,7 +45,7 @@
     "shelljs": "0.8.5",
     "shx": "0.3.4",
     "typescript": "*",
-    "xo": "0.52.3"
+    "xo": "0.52.4"
   },
   "config": {
     "commitizen": {
