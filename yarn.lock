@@ -1912,7 +1912,7 @@ __metadata:
     prettier: 2.7.1
     shelljs: 0.8.5
     shx: 0.3.4
-    typescript: "*"
+    typescript: 4.8.3
     xo: 0.52.4
   languageName: unknown
   linkType: soft
@@ -7599,7 +7599,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:*, typescript@npm:^4.6.4, typescript@npm:^4.7.3":
+"typescript@npm:4.8.3, typescript@npm:^4.6.4, typescript@npm:^4.7.3":
   version: 4.8.3
   resolution: "typescript@npm:4.8.3"
   bin:
@@ -7609,7 +7609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@*#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.8.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.3#~builtin<compat/typescript>":
   version: 4.8.3
   resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=701156"
   bin:
