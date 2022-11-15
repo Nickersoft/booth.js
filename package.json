@@ -30,7 +30,7 @@
     "@types/eslint": "8.4.6",
     "@types/glob": "8.0.0",
     "@types/shelljs": "0.8.11",
-    "@types/xo": "0.39.3",
+    "@types/xo": "0.39.4",
     "@typescript-eslint/eslint-plugin": "5.43.0",
     "commitizen": "4.2.5",
     "concurrently": "7.5.0",
