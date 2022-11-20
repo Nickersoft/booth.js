@@ -33,7 +33,7 @@
     "@types/xo": "0.39.4",
     "@typescript-eslint/eslint-plugin": "5.43.0",
     "commitizen": "4.2.5",
-    "concurrently": "7.5.0",
+    "concurrently": "7.6.0",
     "cz-emoji": "1.3.2-canary.2",
     "esbuild": "0.15.14",
     "glob": "8.0.3",
