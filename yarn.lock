@@ -1902,7 +1902,7 @@ __metadata:
     "@types/shelljs": 0.8.11
     "@types/xo": 0.39.4
     "@typescript-eslint/eslint-plugin": 5.45.1
-    commitizen: 4.2.5
+    commitizen: 4.2.6
     concurrently: 7.6.0
     cz-emoji: 1.3.2-canary.2
     esbuild: 0.15.18
@@ -2321,7 +2321,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commitizen@npm:4.2.5, commitizen@npm:^4.0.3":
+"commitizen@npm:4.2.6":
+  version: 4.2.6
+  resolution: "commitizen@npm:4.2.6"
+  dependencies:
+    cachedir: 2.3.0
+    cz-conventional-changelog: 3.3.0
+    dedent: 0.7.0
+    detect-indent: 6.1.0
+    find-node-modules: ^2.1.2
+    find-root: 1.1.0
+    fs-extra: 9.1.0
+    glob: 7.2.3
+    inquirer: 8.2.4
+    is-utf8: ^0.2.1
+    lodash: 4.17.21
+    minimist: 1.2.6
+    strip-bom: 4.0.0
+    strip-json-comments: 3.1.1
+  bin:
+    commitizen: bin/commitizen
+    cz: bin/git-cz
+    git-cz: bin/git-cz
+  checksum: 4423b25900a02d10e6a6aa98d58404bad0c0c2a68bbeff1ef2379c1ef04344a1fecdaaac3e773988d460de93c8ed4325d1afc186a01f904f7f27edcffcccfd49
+  languageName: node
+  linkType: hard
+
+"commitizen@npm:^4.0.3":
   version: 4.2.5
   resolution: "commitizen@npm:4.2.5"
   dependencies:
