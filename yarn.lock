@@ -1142,9 +1142,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trivago/prettier-plugin-sort-imports@npm:4.1.0":
-  version: 4.1.0
-  resolution: "@trivago/prettier-plugin-sort-imports@npm:4.1.0"
+"@trivago/prettier-plugin-sort-imports@npm:4.1.1":
+  version: 4.1.1
+  resolution: "@trivago/prettier-plugin-sort-imports@npm:4.1.1"
   dependencies:
     "@babel/generator": 7.17.7
     "@babel/parser": ^7.20.5
@@ -1158,7 +1158,7 @@ __metadata:
   peerDependenciesMeta:
     "@vue/compiler-sfc":
       optional: true
-  checksum: f45882bf8fe26610a489c71858303bf2e96b2a43ad63ba6d368a534f5be305ce81d80f39b39bca2839ed36ed4febff891f6726fa040d2b8e3cee78cbda6ca032
+  checksum: 09b4c3c3f4a9e7883737acf92ae7f2a59eb3f7a6f104621a883bdb2a962dcf98398891489267a6fdbba1227a3484676f8d7470e1b3bc6422b4f457382fd030ce
   languageName: node
   linkType: hard
 
@@ -2030,7 +2030,7 @@ __metadata:
   resolution: "booth.js@workspace:."
   dependencies:
     "@playwright/test": 1.31.1
-    "@trivago/prettier-plugin-sort-imports": 4.1.0
+    "@trivago/prettier-plugin-sort-imports": 4.1.1
     "@types/eslint": 8.4.6
     "@types/glob": 8.1.0
     "@types/shelljs": 0.8.11
