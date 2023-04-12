@@ -1276,16 +1276,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/glob@npm:*":
-  version: 8.0.0
-  resolution: "@types/glob@npm:8.0.0"
-  dependencies:
-    "@types/minimatch": "*"
-    "@types/node": "*"
-  checksum: 1817b05f5a8aed851d102a65b5e926d5c777bef927ea62b36d635860eef5364f2046bb5a692d135b6f2b28f34e4a9d44ade9396122c0845bcc7636d35f624747
-  languageName: node
-  linkType: hard
-
 "@types/glob@npm:8.1.0":
   version: 8.1.0
   resolution: "@types/glob@npm:8.1.0"
@@ -1293,6 +1283,16 @@ __metadata:
     "@types/minimatch": ^5.1.2
     "@types/node": "*"
   checksum: 9101f3a9061e40137190f70626aa0e202369b5ec4012c3fabe6f5d229cce04772db9a94fa5a0eb39655e2e4ad105c38afbb4af56a56c0996a8c7d4fc72350e3d
+  languageName: node
+  linkType: hard
+
+"@types/glob@npm:~7.2.0":
+  version: 7.2.0
+  resolution: "@types/glob@npm:7.2.0"
+  dependencies:
+    "@types/minimatch": "*"
+    "@types/node": "*"
+  checksum: 6ae717fedfdfdad25f3d5a568323926c64f52ef35897bcac8aca8e19bc50c0bd84630bbd063e5d52078b2137d8e7d3c26eabebd1a2f03ff350fff8a91e79fc19
   languageName: node
   linkType: hard
 
@@ -1400,13 +1400,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/shelljs@npm:0.8.11":
-  version: 0.8.11
-  resolution: "@types/shelljs@npm:0.8.11"
+"@types/shelljs@npm:0.8.12":
+  version: 0.8.12
+  resolution: "@types/shelljs@npm:0.8.12"
   dependencies:
-    "@types/glob": "*"
+    "@types/glob": ~7.2.0
     "@types/node": "*"
-  checksum: 559b81efba72f2b231485b26510aad68cccfe98dc74087d67dafd5511462997884db0ef18e0e56bf61a3a5789aa65a54dc04845a488bb0528d4a699e6151b99c
+  checksum: ffb47809abef9ee53f900c6b49adb1382d1d78af7f8b50dd474534e3f73127bc4a3849394e4c9de16481cd50203b12464141b4b49d48e88ba6b4c7cc2c85948c
   languageName: node
   linkType: hard
 
@@ -2051,7 +2051,7 @@ __metadata:
     "@trivago/prettier-plugin-sort-imports": 4.1.1
     "@types/eslint": 8.4.6
     "@types/glob": 8.1.0
-    "@types/shelljs": 0.8.11
+    "@types/shelljs": 0.8.12
     "@types/xo": 0.39.4
     "@typescript-eslint/eslint-plugin": 5.58.0
     commitizen: 4.3.0
