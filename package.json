@@ -2,7 +2,7 @@
   "name": "booth.js",
   "version": "0.0.1-rc8",
   "license": "MIT",
-  "packageManager": "yarn@3.5.0",
+  "packageManager": "yarn@3.5.1",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
