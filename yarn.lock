@@ -1275,13 +1275,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:*, @types/eslint@npm:8.4.6":
+"@types/eslint@npm:*":
   version: 8.4.6
   resolution: "@types/eslint@npm:8.4.6"
   dependencies:
     "@types/estree": "*"
     "@types/json-schema": "*"
   checksum: bfaf27b00031b2238139003965475d023306119e467947f7a43a41e380918e365618e2ae6a6ae638697f6421a6bb1571db078695ff5e548f23618000b38acd23
+  languageName: node
+  linkType: hard
+
+"@types/eslint@npm:8.44.0":
+  version: 8.44.0
+  resolution: "@types/eslint@npm:8.44.0"
+  dependencies:
+    "@types/estree": "*"
+    "@types/json-schema": "*"
+  checksum: 2655f409a4ecdd64bb9dd9eb6715e7a2ac30c0e7f902b414e10dbe9d6d497baa5a0f13105e1f7bd5ad7a913338e2ab4bed1faf192a7a0d27d1acd45ba79d3f69
   languageName: node
   linkType: hard
 
@@ -2085,7 +2095,7 @@ __metadata:
   dependencies:
     "@playwright/test": 1.36.0
     "@trivago/prettier-plugin-sort-imports": 4.1.1
-    "@types/eslint": 8.4.6
+    "@types/eslint": 8.44.0
     "@types/glob": 8.1.0
     "@types/shelljs": 0.8.12
     "@types/xo": 0.39.4
