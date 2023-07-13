@@ -45,12 +45,8 @@ Getting up and running with Booth is as simple as:
 
 ```bash
 $ npm install booth.js
-```
-
-Or, if you use [Yarn](https://yarnpkg.com):
-
-```bash
 $ yarn add booth.js
+$ pnpm add booth.js
 ```
 
 ## 📦 Dealing with Bundlers

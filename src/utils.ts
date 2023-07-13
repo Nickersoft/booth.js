@@ -5,8 +5,8 @@
  * @returns The MediaStream object
  */
 export async function getUserMedia(deviceId?: string): Promise<MediaStream> {
-  return navigator.mediaDevices.getUserMedia({
-    audio: deviceId ? { deviceId } : true,
-    video: false,
-  });
+	return navigator.mediaDevices.getUserMedia({
+		audio: deviceId ? { deviceId } : true,
+		video: false,
+	});
 }

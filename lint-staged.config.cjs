@@ -1,3 +1,3 @@
 module.exports = {
-  "*.ts": [() => "yarn check -p tsconfig.json --noEmit", "yarn lint --fix"],
+  "*.ts": [() => "tsc -p tsconfig.json --noEmit", "rome check --apply"],
 };
