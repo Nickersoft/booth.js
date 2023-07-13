@@ -10,15 +10,16 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    container: node:20
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@v2
       - name: Install dependencies
         run: pnpm install
       - name: Run lint
-        run: pnpm lint
+        run: pnpm rome check **/*.{cjs,ts}
       - name: Run tsc
-        run: pnpm check
+        run: pnpm tsc
       - name: Run build
         run: pnpm build
