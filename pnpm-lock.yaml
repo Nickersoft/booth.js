@@ -12,8 +12,8 @@ devDependencies:
     specifier: 8.1.0
     version: 8.1.0
   '@types/shelljs':
-    specifier: 0.8.12
-    version: 0.8.12
+    specifier: 0.8.13
+    version: 0.8.13
   commitizen:
     specifier: 4.3.0
     version: 4.3.0
@@ -1139,8 +1139,8 @@ packages:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
     dev: true
 
-  /@types/shelljs@0.8.12:
-    resolution: {integrity: sha512-ZA8U81/gldY+rR5zl/7HSHrG2KDfEb3lzG6uCUDhW1DTQE9yC/VBQ45fXnXq8f3CgInfhZmjtdu/WOUlrXRQUg==}
+  /@types/shelljs@0.8.13:
+    resolution: {integrity: sha512-++uMLOQSLlse1kCfEOwhgmHuaABZwinkylmUKCpvcEGZUov3TtM+gJZloSkW/W+9pEAEg/VBOwiSR05oqJsa5A==}
     dependencies:
       '@types/glob': 7.2.0
       '@types/node': 20.4.2
