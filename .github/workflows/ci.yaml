@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Run lint
-        run: pnpm rome check **/*.{cjs,ts}
+        run: pnpm check
       - name: Run tsc
         run: pnpm tsc
       - name: Run build
