@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Install asdf & tools
-        uses: asdf-vm/actions/install@v2
+        uses: asdf-vm/actions/install@v3
       - name: Install dependencies
         run: pnpm install
       - name: Run lint
