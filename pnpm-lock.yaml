@@ -30,8 +30,8 @@ devDependencies:
     specifier: 0.21.3
     version: 0.21.3
   glob:
-    specifier: 10.4.0
-    version: 10.4.0
+    specifier: 10.4.1
+    version: 10.4.1
   husky:
     specifier: 9.0.11
     version: 9.0.11
@@ -2130,8 +2130,8 @@ packages:
     engines: {node: '>=16'}
     dev: true
 
-  /glob@10.4.0:
-    resolution: {integrity: sha512-+K6CicMIL11UEbC3gH/MVxgGG4gJDMu9tPD+nH+d6W3+y2fYuDSbpa2b+EGyvCGvSN/PT/7daJTH25NknJkcIQ==}
+  /glob@10.4.1:
+    resolution: {integrity: sha512-2jelhlq3E4ho74ZyVLN03oKdAZVUa6UDZzFLVH1H7dnoax+y9qyaq8zBkfDIggjniU19z0wU18y16jMB2eyVIw==}
     engines: {node: '>=16 || 14 >=14.18'}
     hasBin: true
     dependencies:
