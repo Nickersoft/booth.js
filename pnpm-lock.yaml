@@ -39,8 +39,8 @@ devDependencies:
     specifier: 29.7.0
     version: 29.7.0(@types/node@22.7.6)
   lint-staged:
-    specifier: 15.3.0
-    version: 15.3.0
+    specifier: 15.4.0
+    version: 15.4.0
   pinst:
     specifier: 3.0.0
     version: 3.0.0
@@ -3081,8 +3081,8 @@ packages:
     requiresBuild: true
     dev: true
 
-  /lint-staged@15.3.0:
-    resolution: {integrity: sha512-vHFahytLoF2enJklgtOtCtIjZrKD/LoxlaUusd5nh7dWv/dkKQJY74ndFSzxCdv7g0ueGg1ORgTSt4Y9LPZn9A==}
+  /lint-staged@15.4.0:
+    resolution: {integrity: sha512-UdODqEZiQimd7rCzZ2vqFuELRNUda3mdv7M93jhE4SmDiqAj/w/msvwKgagH23jv2iCPw6Q5m+ltX4VlHvp2LQ==}
     engines: {node: '>=18.12.0'}
     hasBin: true
     dependencies:
