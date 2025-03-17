@@ -45,8 +45,8 @@ devDependencies:
     specifier: 3.0.0
     version: 3.0.0
   shelljs:
-    specifier: 0.9.1
-    version: 0.9.1
+    specifier: 0.9.2
+    version: 0.9.2
   shx:
     specifier: 0.3.4
     version: 0.3.4
@@ -3924,8 +3924,8 @@ packages:
       rechoir: 0.6.2
     dev: true
 
-  /shelljs@0.9.1:
-    resolution: {integrity: sha512-ngPynK9u9OmsL2DttaTOhEPahyAjVbjIwCK3R+2V9YDq0/equpq7hVz3XrnfIjAk1thN5ET5mEIzAmocmV6i+Q==}
+  /shelljs@0.9.2:
+    resolution: {integrity: sha512-S3I64fEiKgTZzKCC46zT/Ib9meqofLrQVbpSswtjFfAVDW+AZ54WTnAM/3/yENoxz/V1Cy6u3kiiEbQ4DNphvw==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
