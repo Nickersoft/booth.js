@@ -15,8 +15,8 @@ devDependencies:
     specifier: 8.1.0
     version: 8.1.0
   '@types/shelljs':
-    specifier: 0.8.16
-    version: 0.8.16
+    specifier: 0.8.17
+    version: 0.8.17
   commitizen:
     specifier: 4.3.1
     version: 4.3.1(@types/node@22.7.6)(typescript@5.8.3)
@@ -1204,13 +1204,6 @@ packages:
     dev: true
     optional: true
 
-  /@types/glob@7.2.0:
-    resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
-    dependencies:
-      '@types/minimatch': 5.1.2
-      '@types/node': 22.7.6
-    dev: true
-
   /@types/glob@8.1.0:
     resolution: {integrity: sha512-IO+MJPVhoqz+28h1qLAcBEH2+xHMK6MTyHJc7MTnnYb6wsoLR29POVGJ7LycmVXIqyy/4/2ShP5sUwTXuOwb/w==}
     dependencies:
@@ -1254,11 +1247,11 @@ packages:
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
     dev: true
 
-  /@types/shelljs@0.8.16:
-    resolution: {integrity: sha512-40SUXiH0tZfAg/oKkkGF1kdHPAmE4slv2xAmbfa8VtE6ztHYwdpW2phlzHTVdJh5JOGqA3Cx1Hzp7kxFalKHYA==}
+  /@types/shelljs@0.8.17:
+    resolution: {integrity: sha512-IDksKYmQA2W9MkQjiyptbMmcQx+8+Ol6b7h6dPU5S05JyiQDSb/nZKnrMrZqGwgV6VkVdl6/SPCKPDlMRvqECg==}
     dependencies:
-      '@types/glob': 7.2.0
       '@types/node': 22.7.6
+      glob: 11.0.3
     dev: true
 
   /@types/stack-utils@2.0.3:
