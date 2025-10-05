@@ -27,11 +27,11 @@ run = "bun x tsgo --project tsconfig.json"
 [tasks.clean]
 run = "rm -rf ./dist"
 
-[tasks.format]
-run = "bun x biome format --write **/*.{cjs,ts}"
+[tasks.fix]
+run = "bun x biome check --fix"
 
 [tasks.check]
-run = "bun x biome check **/*.{cjs,ts}"
+run = "bun x biome check"
 
 [tasks.build]
 depends = ["setup", "clean"]
