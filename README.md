@@ -129,7 +129,7 @@ Keep in mind, Booth doesn't support custom events yet (using `on`), but might in
 
 ### "Why build this?"
 
-The short answer: it's 2022, and recording audio on the web is still _much_ harder than it should be. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
+The short answer: it's 2025, and recording audio on the web is still _much_ harder than it should be. Just to monitor something as fundamental as input volume requires [_so much code_](https://stackoverflow.com/a/62732195). My God.
 
 A little while ago (as in 5+ years ago), the Google Chrome team announced support for [Audio Worklets](https://developer.chrome.com/blog/audio-worklet/), a new way to manage web audio that was built to replace the [ScriptProcessorNode](https://developer.mozilla.org/en-US/docs/Web/API/ScriptProcessorNode). BoothJS uses Audio Worklets out-of-the-box, whereas older, similar libraries still rely mostly on ScriptProcessorNodes.  
 

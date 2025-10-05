@@ -32,7 +32,7 @@ class VolumeMeter extends AudioWorkletProcessor {
 		this.volume = Math.max(rms, this.volume * smoothingFactor);
 	}
 
-	process(inputs: Float32Array[][], outputs: Float32Array[][]) {
+	process(inputs: Float32Array[][], _outputs: Float32Array[][]) {
 		// This example only handles mono channel.
 		const inputChannelData = inputs[0][0];
 
