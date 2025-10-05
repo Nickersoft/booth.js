@@ -25,12 +25,12 @@ jobs:
         uses: jdx/mise-action@v3
         with:
           experimental: true
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: bun audit signatures
       - name: Check code
         run: mise check
       - name: Run tests
         run: mise test
-      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
-        run: bun audit signatures
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
