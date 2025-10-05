@@ -22,7 +22,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup mise-en-place
-        uses: jdx/mise-action@v2
+        uses: jdx/mise-action@v3
+        with:
+          experimental: true
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: bun audit signatures
       - name: Release
