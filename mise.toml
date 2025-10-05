@@ -2,23 +2,24 @@
 bun = "latest"
 node = "lts"
 
-[vars]
-build_args = './src/index.ts --outdir=dist --sourcemap --splitting --format=esm --target=browser --clean'
+[hooks]
+postinstall = "bun install && bun x playwright install --with-deps"
 
-[tasks.setup]
-run = "bun install"
+[vars]
+entrypoint = "./src/index.ts"
+build_args = '--outdir=dist --sourcemap --splitting --format=esm --target=browser --clean'
 
 [tasks."build:esm"]
 hide = true
-run = "bun build {{vars.build_args}}"
+run = "bun build {{vars.entrypoint}} {{vars.build_args}}"
 
 [tasks."build:worklets"]
 hide = true
-run = "bun build src/worklets/volume-meter.ts --outdir=dist/worklets --sourcemap --splitting --format=esm --target=browser --clean"
+run = "ls src/worklets/*.ts | xargs bun build {{vars.build_args}} --outdir=dist/worklets"
 
 [tasks."build:min"]
 hide = true
-run = "bun build {{vars.build_args}} --minify --entry-naming=\"[dir]/[name].min.[ext]\""
+run = "bun build {{vars.entrypoint}} {{vars.build_args}} --minify --entry-naming=\"[dir]/[name].min.[ext]\""
 
 [tasks."build:dts"]
 hide = true
@@ -34,25 +35,21 @@ run = "bun x biome check --fix"
 run = "bun x biome check"
 
 [tasks.build]
-depends = ["setup", "clean"]
+depends = ["clean"]
 run = [{ tasks = ["build:esm", "build:worklets", "build:min", "build:dts"] }]
 
-[tasks."test:setup"]
-hide = true
-run = "bun x playwright install --with-deps"
-
 [tasks.test]
-depends = ["build", "test:setup"]
+depends = ["build"]
 run = "bun x playwright test"
 
 [tasks."test:ui"]
-depends = ["build", "test:setup"]
+depends = ["build"]
 run = "bun x playwright test --ui"
 
 [tasks."test:headed"]
-depends = ["build", "test:setup"]
+depends = ["build"]
 run = "bun x playwright test --headed"
 
 [tasks."test:debug"]
-depends = ["build", "test:setup"]
+depends = ["build"]
 run = "bun x playwright test --debug"

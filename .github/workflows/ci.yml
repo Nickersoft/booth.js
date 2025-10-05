@@ -15,9 +15,7 @@ jobs:
         uses: actions/checkout@v5
       - name: Setup mise-en-place
         uses: jdx/mise-action@v2
-      - name: Install dependencies
-        run: mise install && mise setup
       - name: Check code
         run: mise check
       - name: Run tests
-        run: mise test        
+        run: mise test
