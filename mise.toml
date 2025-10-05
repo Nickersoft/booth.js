@@ -3,7 +3,7 @@ bun = "latest"
 node = "lts"
 
 [hooks]
-postinstall = "bun install && bun x playwright install --with-deps"
+postinstall = "bun install"
 
 [vars]
 entrypoint = "./src/index.ts"
@@ -39,17 +39,20 @@ depends = ["clean"]
 run = [{ tasks = ["build:esm", "build:worklets", "build:min", "build:dts"] }]
 
 [tasks.test]
-depends = ["build"]
+depends = ["build", "test:setup"]
 run = "bun x playwright test"
 
+[tasks."test:setup"]
+run = "bun x playwright install --with-deps"
+
 [tasks."test:ui"]
-depends = ["build"]
+depends = ["build", "test:setup"]
 run = "bun x playwright test --ui"
 
 [tasks."test:headed"]
-depends = ["build"]
+depends = ["build", "test:setup"]
 run = "bun x playwright test --headed"
 
 [tasks."test:debug"]
-depends = ["build"]
+depends = ["build", "test:setup"]
 run = "bun x playwright test --debug"
