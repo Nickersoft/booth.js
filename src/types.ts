@@ -1,23 +1,25 @@
 type Volume = number;
 
-type VolumeChangeEvent = {
+interface VolumeChangeEvent {
 	volume: Volume;
-};
+}
 
-export type InstallWorkletVars = {
+export interface InstallWorkletVars {
 	context: AudioContext;
 	stream: MediaStream;
 	node: AudioWorkletNode;
-};
+}
 
-export type AudioRecorderOptions = {
+export interface AudioRecorderOptions
+	extends Omit<MediaRecorderOptions, "mimeType"> {
 	deviceId?: string;
 	workletPath?: string;
-} & MediaRecorderOptions;
+	mimeType?: string | string[];
+}
 
-export type AudioEventListenerMap = {
+export interface AudioEventListenerMap {
 	volumechange: VolumeChangeEvent;
-};
+}
 
 export type AudioEventListener<T> = (event: T) => void;
 

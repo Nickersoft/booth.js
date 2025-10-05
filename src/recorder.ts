@@ -6,9 +6,34 @@ import type {
 	InstallWorkletVars,
 } from "./types.js";
 
-import { getUserMedia } from "./utils.js";
-
 export class AudioRecorder {
+	/**
+	 * The live audio context
+	 */
+	#context?: AudioContext;
+
+	/**
+	 * Dictionary of event listeners associated with the recorder
+	 */
+	#listeners: AudioEventListeners = {};
+
+	/**
+	 * Buffer of currently recorded blob chunks
+	 */
+	#buffer?: Blob[] = [];
+
+	/**
+	 * Underlying media recorder object
+	 */
+	#recorder?: MediaRecorder;
+
+	/**
+	 * The currently active media stream
+	 */
+	#stream?: MediaStream;
+
+	constructor(private readonly options: AudioRecorderOptions = {}) {}
+
 	/**
 	 * Lists all of the users available audio devices
 	 * @returns The list of Device objects
@@ -20,59 +45,100 @@ export class AudioRecorder {
 	}
 
 	/**
-	 * The live audio context
+	 * Returns the best available mime type from the provided options
+	 * or undefined if none is supported
+	 *
+	 * @returns The supported mime type or undefined
 	 */
-	private context?: AudioContext;
+	get mimeType(): string | undefined {
+		return Array.isArray(this.options.mimeType)
+			? this.options.mimeType.find((type) =>
+					MediaRecorder.isTypeSupported(type),
+				)
+			: this.options.mimeType;
+	}
 
 	/**
-	 * Dictionary of event listeners associated with the recorder
+	 * Returns the active audio context or creates one if one doesn't exist
+	 *
+	 * @returns The AudioContext object
 	 */
-	private listeners: AudioEventListeners = {};
+	get audioContext(): AudioContext {
+		if (!this.#context) {
+			this.#context = new AudioContext();
+		}
+
+		return this.#context;
+	}
+
+	get state(): RecordingState | undefined {
+		return this.#recorder?.state;
+	}
 
 	/**
-	 * Buffer of currently recorded blob chunks
+	 * Returns the active audio recorder or creates one if one doesn't exist
+	 *
+	 * @returns The MediaRecorder object
 	 */
-	private buffer?: Blob[] = [];
+	async #getAudioRecorder(): Promise<MediaRecorder> {
+		if (!this.#recorder) {
+			this.#recorder = await this.#createAudioRecorder();
+		}
+
+		return this.#recorder;
+	}
 
 	/**
-	 * Underlying media recorder object
+	 * Returns the active audio stream or creates one if one doesn't exist
+	 *
+	 * @returns The MediaStream object
 	 */
-	private recorder?: MediaRecorder;
+	async #getAudioStream(): Promise<MediaStream> {
+		if (!this.#stream) {
+			const { deviceId } = this.options;
+			this.#stream = await navigator.mediaDevices.getUserMedia({
+				audio: deviceId ? { deviceId } : true,
+				video: false,
+			});
+		}
 
-	/**
-	 * The currently active media stream
-	 */
-	private stream?: MediaStream;
-
-	constructor(private readonly options: AudioRecorderOptions = {}) {}
+		return this.#stream;
+	}
 
 	/**
 	 * Starts recording audio using the given device ID or, if none is provided, the default device
 	 * @param deviceId Optional device ID to record with
 	 */
-	async start(deviceId?: string): Promise<void> {
-		this.recorder = await this.createAudioRecorder();
-		this.recorder.start();
+	async start(): Promise<void> {
+		const recorder = await this.#getAudioRecorder();
+		recorder.start();
 	}
 
 	/**
 	 * Stops recording
 	 * @returns The recorded data as a Blob object
 	 */
-	async stop() {
+	async stop(): Promise<Blob> {
 		return new Promise((resolve) => {
 			// Wait for the audio to stop and for the data to be available
-			this.recorder?.addEventListener("stop", () => {
-				resolve(this.flush());
+			this.#recorder?.addEventListener("stop", () => {
+				const blob = new Blob(this.#buffer);
+
+				this.#buffer = [];
+
+				for (const track of this.#stream?.getTracks() ?? []) {
+					track.stop();
+				}
+
+				this.#recorder = undefined;
+				this.#stream = undefined;
+
+				void this.#context?.suspend();
+
+				resolve(blob);
 			});
 
-			this.recorder?.stop();
-
-			void this.context?.suspend();
-
-			for (const track of this.stream?.getTracks() ?? []) {
-				track.stop();
-			}
+			this.#recorder?.stop();
 		});
 	}
 
@@ -86,16 +152,14 @@ export class AudioRecorder {
 	async installWorklet(
 		name: string,
 		path: string,
-		callback: (args: InstallWorkletVars) => void | Promise<void>,
-	) {
-		const context = this.getAudioContext();
-		const stream = await this.getAudioStream();
+	): Promise<InstallWorkletVars> {
+		const stream = await this.#getAudioStream();
 
-		await context.audioWorklet.addModule(path);
+		await this.audioContext.audioWorklet.addModule(path);
 
-		const node = new AudioWorkletNode(context, name);
+		const node = new AudioWorkletNode(this.audioContext, name);
 
-		await callback({ context, stream, node });
+		return { context: this.audioContext, stream, node };
 	}
 
 	/**
@@ -107,22 +171,11 @@ export class AudioRecorder {
 		eventName: T,
 		callback: AudioEventListener<AudioEventListenerMap[T]>,
 	) {
-		if (!this.listeners[eventName]) {
-			this.listeners[eventName] = [];
+		if (!this.#listeners[eventName]) {
+			this.#listeners[eventName] = [];
 		}
 
-		this.listeners[eventName]?.push(callback);
-	}
-
-	/**
-	 * Clears the currently recorded chunks and returns the existing
-	 * chunks as a single blob object
-	 * @returns The recorded chunks as a single
-	 */
-	private flush() {
-		const blob = new Blob(this.buffer);
-		this.buffer = [];
-		return blob;
+		this.#listeners[eventName]?.push(callback);
 	}
 
 	/**
@@ -131,18 +184,21 @@ export class AudioRecorder {
 	 * @param options Recorder options
 	 * @returns
 	 */
-	private async createAudioRecorder(): Promise<MediaRecorder> {
-		const stream = await this.getAudioStream();
+	async #createAudioRecorder(): Promise<MediaRecorder> {
+		const stream = await this.#getAudioStream();
 
-		const recorder = new MediaRecorder(stream, this.options);
+		const recorder = new MediaRecorder(stream, {
+			...this.options,
+			mimeType: this.mimeType,
+		});
 
-		if ("volumechange" in this.listeners) {
+		if ("volumechange" in this.#listeners) {
 			await this.setupAudioMeter();
 		}
 
 		recorder.addEventListener("dataavailable", ({ data }) => {
 			if (data.size > 0) {
-				this.buffer?.push(data);
+				this.#buffer?.push(data);
 			}
 		});
 
@@ -159,35 +215,9 @@ export class AudioRecorder {
 		name: T,
 		event: AudioEventListenerMap[T],
 	) {
-		for (const listener of this.listeners?.[name] ?? []) {
+		for (const listener of this.#listeners?.[name] ?? []) {
 			listener(event);
 		}
-	}
-
-	/**
-	 * Returns the active audio stream or creates one if one doesn't exist
-	 *
-	 * @returns The MediaStream object
-	 */
-	private async getAudioStream(): Promise<MediaStream> {
-		if (!this.stream) {
-			this.stream = await getUserMedia();
-		}
-
-		return this.stream;
-	}
-
-	/**
-	 * Returns the active audio context or creates one if one doesn't exist
-	 *
-	 * @returns The AudioContext object
-	 */
-	private getAudioContext(): AudioContext {
-		if (!this.context) {
-			this.context = new AudioContext();
-		}
-
-		return this.context;
 	}
 
 	/**
@@ -205,23 +235,21 @@ export class AudioRecorder {
 	 * Sets up audio metering if a volumechange listener is attached
 	 */
 	private async setupAudioMeter(): Promise<void> {
-		return this.installWorklet(
+		const { node, context, stream } = await this.installWorklet(
 			"volume-meter",
 			this.getWorkletPath("volume-meter.js"),
-			({ node, context, stream }) => {
-				const micNode = context.createMediaStreamSource(stream);
-
-				node.port.addEventListener(
-					"message",
-					({ data: volume }: { data: number }) => {
-						this.fireEvent("volumechange", { volume });
-					},
-				);
-
-				node.port.start();
-
-				micNode.connect(node).connect(context.destination);
-			},
 		);
+
+		const micNode = context.createMediaStreamSource(stream);
+
+		node.port.addEventListener("message", ({ data }) => {
+			this.fireEvent("volumechange", {
+				volume: data as number,
+			});
+		});
+
+		node.port.start();
+
+		micNode.connect(node).connect(context.destination);
 	}
 }

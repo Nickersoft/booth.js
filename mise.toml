@@ -1,0 +1,58 @@
+[tools]
+bun = "latest"
+node = "lts"
+
+[vars]
+build_args = './src/index.ts --outdir=dist --sourcemap --splitting --format=esm --target=browser --clean'
+
+[tasks.setup]
+run = "bun install"
+
+[tasks."build:esm"]
+hide = true
+run = "bun build {{vars.build_args}}"
+
+[tasks."build:worklets"]
+hide = true
+run = "bun build src/worklets/volume-meter.ts --outdir=dist/worklets --sourcemap --splitting --format=esm --target=browser --clean"
+
+[tasks."build:min"]
+hide = true
+run = "bun build {{vars.build_args}} --minify --entry-naming=\"[dir]/[name].min.[ext]\""
+
+[tasks."build:dts"]
+hide = true
+run = "bun x tsgo --project tsconfig.json"
+
+[tasks.clean]
+run = "rm -rf ./dist"
+
+[tasks.format]
+run = "bun x biome format --write **/*.{cjs,ts}"
+
+[tasks.check]
+run = "bun x biome check **/*.{cjs,ts}"
+
+[tasks.build]
+depends = ["setup", "clean"]
+run = [{ tasks = ["build:esm", "build:worklets", "build:min", "build:dts"] }]
+
+[tasks."test:setup"]
+hide = true
+run = "bun x playwright install --with-deps"
+
+[tasks.test]
+depends = ["build", "test:setup"]
+run = "bun x playwright test"
+
+[tasks."test:ui"]
+depends = ["build", "test:setup"]
+run = "bun x playwright test --ui"
+
+[tasks."test:headed"]
+depends = ["build", "test:setup"]
+run = "bun x playwright test --headed"
+
+[tasks."test:debug"]
+depends = ["build", "test:setup"]
+run = "bun x playwright test --debug"
