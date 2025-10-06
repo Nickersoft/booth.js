@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
-    "@playwright/test": "^1.55.1",
+    "@playwright/test": "next",
     "@types/bun": "^1.2.23",
     "@typescript/native-preview": "^7.0.0-dev.20251005.1",
     "husky": "9.1.7",
