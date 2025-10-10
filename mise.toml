@@ -7,19 +7,19 @@ postinstall = "bun install"
 
 [vars]
 entrypoint = "./src/index.ts"
-build_args = '--outdir=dist --sourcemap --splitting --format=esm --target=browser --clean'
+build_args = '--outdir=dist --sourcemap --splitting --target=browser --clean'
 
 [tasks."build:esm"]
 hide = true
-run = "bun build {{vars.entrypoint}} {{vars.build_args}}"
+run = "bun build {{vars.entrypoint}} {{vars.build_args}} --format=esm"
+
+[tasks."build:cjs"]
+hide = true
+run = "bun build {{vars.entrypoint}} {{vars.build_args}} --format=cjs --entry-naming=\"[dir]/[name].cjs\""
 
 [tasks."build:worklets"]
 hide = true
 run = "ls src/worklets/*.ts | xargs bun build {{vars.build_args}} --outdir=dist/worklets"
-
-[tasks."build:min"]
-hide = true
-run = "bun build {{vars.entrypoint}} {{vars.build_args}} --minify --entry-naming=\"[dir]/[name].min.[ext]\""
 
 [tasks."build:dts"]
 hide = true
@@ -36,7 +36,7 @@ run = "bun x biome check"
 
 [tasks.build]
 depends = ["clean"]
-run = [{ tasks = ["build:esm", "build:worklets", "build:min", "build:dts"] }]
+run = [{ tasks = ["build:esm", "build:cjs", "build:worklets", "build:dts"] }]
 
 [tasks.test]
 depends = ["build", "test:setup"]
