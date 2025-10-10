@@ -11,12 +11,6 @@ export interface CreateAnalyzerOptions {
   smoothingTimeConstant?: number;
 }
 
-export interface InstallWorkletVars {
-  context: AudioContext;
-  stream: MediaStream;
-  node: AudioWorkletNode;
-}
-
 export interface AudioRecorderOptions
   extends Omit<MediaRecorderOptions, "mimeType"> {
   deviceId?: string;
@@ -26,6 +20,7 @@ export interface AudioRecorderOptions
 
 export interface AudioEventListenerMap {
   volumechange: VolumeChangeEvent;
+  stop: Event;
 }
 
 export type AudioEventListener<T> = (event: T) => void;
