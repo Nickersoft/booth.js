@@ -1,4 +1,3 @@
-import { Analyser } from "./analyser.js";
 import { Monitor, type MonitorOptions } from "./monitor.js";
 
 export interface RecorderOptions extends MonitorOptions {

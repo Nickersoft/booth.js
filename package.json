@@ -1,36 +1,36 @@
 {
-  "name": "booth.js",
-  "version": "0.0.1-rc8",
-  "license": "MIT",
-  "type": "module",
-  "repository": "https://github.com/Nickersoft/booth.js",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/types/index.d.ts"
-    }
-  },
-  "scripts": {
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.5",
-    "@playwright/test": "next",
-    "@types/bun": "^1.2.23",
-    "@typescript/native-preview": "^7.0.0-dev.20251005.1",
-    "husky": "9.1.7",
-    "lint-staged": "16.2.4",
-    "playwright": "next",
-    "semantic-release": "^24.2.9",
-    "typescript": "5.9.3"
-  },
-  "lint-staged": {
-    "*.{ts,js}": [
-      "mise run fix"
-    ]
-  }
+	"name": "booth.js",
+	"version": "0.0.1-rc8",
+	"license": "MIT",
+	"type": "module",
+	"repository": "https://github.com/Nickersoft/booth.js",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/types/index.d.ts"
+		}
+	},
+	"scripts": {
+		"prepare": "husky"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.2.5",
+		"@playwright/test": "next",
+		"@types/bun": "^1.2.23",
+		"@typescript/native-preview": "^7.0.0-dev.20251005.1",
+		"husky": "9.1.7",
+		"lint-staged": "16.2.4",
+		"playwright": "next",
+		"semantic-release": "^24.2.9",
+		"typescript": "5.9.3"
+	},
+	"lint-staged": {
+		"*.{ts,js}": [
+			"mise run fix"
+		]
+	}
 }
