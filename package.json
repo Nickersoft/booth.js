@@ -30,8 +30,7 @@
   },
   "lint-staged": {
     "*.{ts,js}": [
-      "biome format",
-      "biome lint --fix"
+      "mise run fix"
     ]
   }
 }
