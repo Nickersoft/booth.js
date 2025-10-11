@@ -1,17 +1,12 @@
-import type {
-  AudioEventListener,
-  AudioEventListenerMap,
-  CreateAnalyzerOptions,
-  AudioEventListeners,
-  AudioRecorderOptions,
-  InstallWorkletVars,
-} from "./types.js";
+import { Analyser } from "./analyser.js";
+import { Monitor, type MonitorOptions } from "./monitor.js";
 
-export class AudioRecorder {
-  /**
-   * The live audio context
-   */
-  #context?: AudioContext;
+export interface RecorderOptions extends MonitorOptions {
+  mimeType?: string | string[];
+}
+
+export class Recorder extends Monitor {
+  readonly mimeType: string | undefined;
 
   /**
    * Dictionary of event listeners associated with the recorder
@@ -26,78 +21,26 @@ export class AudioRecorder {
   #buffer?: Blob[] = [];
 
   /**
-   * Array of analyser nodes associated with the recorder
-   */
-  #analyzers: AnalyserNode[] = [];
-
-  /**
    * Underlying media recorder object
    */
   #recorder?: MediaRecorder;
-
-  /**
-   * Underlying media stream source node
-   */
-  #source?: MediaStreamAudioSourceNode;
 
   /**
    * The currently active media stream
    */
   #stream?: MediaStream;
 
-  constructor(private readonly options: AudioRecorderOptions = {}) {}
+  constructor(stream: MediaStream, options: RecorderOptions = {}) {
+    super(stream, options);
 
-  /**
-   * Lists all of the users available audio devices
-   * @returns The list of Device objects
-   */
-  static async listDevices(): Promise<MediaDeviceInfo[]> {
-    return navigator.mediaDevices
-      .enumerateDevices()
-      .then((list) => list.filter((d) => d.kind === "audioinput"));
-  }
-
-  async getSource(): Promise<MediaStreamAudioSourceNode> {
-    if (!this.#source) {
-      this.#source = this.#audioContext.createMediaStreamSource(
-        await this.getStream(),
-      );
-    }
-
-    return this.#source;
-  }
-
-  get destination(): AudioDestinationNode {
-    return this.#audioContext.destination;
+    this.mimeType = Array.isArray(options.mimeType)
+      ? options.mimeType.find((type) => MediaRecorder.isTypeSupported(type))
+      : options.mimeType;
   }
 
   /**
-   * Returns the best available mime type from the provided options
-   * or undefined if none is supported
-   *
-   * @returns The supported mime type or undefined
+   * The recording state of the media recorder
    */
-  get mimeType(): string | undefined {
-    return Array.isArray(this.options.mimeType)
-      ? this.options.mimeType.find((type) =>
-          MediaRecorder.isTypeSupported(type),
-        )
-      : this.options.mimeType;
-  }
-
-  /**
-   * Returns the active audio context or creates one if one doesn't exist
-   *
-   * @returns The AudioContext object
-   */
-  get #audioContext(): AudioContext {
-    if (!this.#context) {
-      this.#context = new AudioContext();
-    }
-
-    return this.#context;
-  }
-
   get state(): RecordingState | undefined {
     return this.#recorder?.state;
   }
@@ -107,11 +50,9 @@ export class AudioRecorder {
    *
    * @returns The MediaRecorder object
    */
-  async #getMediaRecorder(): Promise<MediaRecorder> {
+  get mediaRecorder(): MediaRecorder {
     if (!this.#recorder) {
-      const stream = await this.getStream();
-
-      this.#recorder = new MediaRecorder(stream, {
+      this.#recorder = new MediaRecorder(this.stream, {
         ...this.options,
         mimeType: this.mimeType,
       });
@@ -133,29 +74,11 @@ export class AudioRecorder {
   }
 
   /**
-   * Returns the active audio stream or creates one if one doesn't exist
-   *
-   * @returns The MediaStream object
-   */
-  async getStream(): Promise<MediaStream> {
-    if (!this.#stream) {
-      const { deviceId } = this.options;
-      this.#stream = await navigator.mediaDevices.getUserMedia({
-        audio: deviceId ? { deviceId } : true,
-        video: false,
-      });
-    }
-
-    return this.#stream;
-  }
-
-  /**
    * Starts recording audio using the given device ID or, if none is provided, the default device
-   * @param deviceId Optional device ID to record with
+   * @param timeslice Optional timeslice in milliseconds
    */
-  async start(): Promise<void> {
-    const recorder = await this.#getMediaRecorder();
-    recorder.start();
+  start(timeslice?: number) {
+    return this.mediaRecorder.start(timeslice);
   }
 
   /**
@@ -177,53 +100,13 @@ export class AudioRecorder {
         this.#recorder = undefined;
         this.#stream = undefined;
 
-        void this.#context?.suspend();
+        void this.context?.suspend();
 
         resolve(blob);
       });
 
       this.#recorder?.stop();
     });
-  }
-
-  async createAnalyzer({
-    fftSize,
-    minDecibels,
-    maxDecibels,
-    smoothingTimeConstant,
-  }: CreateAnalyzerOptions): Promise<AnalyserNode> {
-    const analyzer = this.#audioContext.createAnalyser();
-
-    if (fftSize) {
-      analyzer.fftSize = fftSize;
-    }
-
-    if (minDecibels) {
-      analyzer.minDecibels = minDecibels;
-    }
-
-    if (maxDecibels) {
-      analyzer.maxDecibels = maxDecibels;
-    }
-
-    if (smoothingTimeConstant) {
-      analyzer.smoothingTimeConstant = smoothingTimeConstant;
-    }
-
-    this.#analyzers.push(analyzer);
-
-    return analyzer;
-  }
-
-  /**
-   * Installs a custom audio worklet to the current audio context
-   *
-   * @param name The registered name of the worklet
-   * @param path The absolute path to the worklet
-   */
-  async createWorklet(name: string, path: string): Promise<AudioWorkletNode> {
-    await this.#audioContext.audioWorklet.addModule(path);
-    return new AudioWorkletNode(this.#audioContext, name);
   }
 
   /**
@@ -235,6 +118,9 @@ export class AudioRecorder {
     eventName: T,
     callback: MediaRecorderEventMap[T],
   ) {
+    if (!this.#listeners[eventName]) {
+      this.#listeners[eventName] = [];
+    }
     this.#listeners[eventName]?.push(callback);
   }
 }

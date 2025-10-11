@@ -1,107 +1,99 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Device Enumeration", () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto("/tests/index.html");
-	});
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/tests/index.html");
+  });
 
-	test("should list audio input devices", async ({ page }) => {
-		const devices = await page.evaluate(async () => {
-			const { AudioRecorder } = await import("/dist/index.js");
-			const deviceList = await AudioRecorder.listDevices();
+  test("should list audio input devices", async ({ page }) => {
+    const devices = await page.evaluate(async () => {
+      const { getDevices } = await import("/dist/index.js");
+      const deviceList = await getDevices();
 
-			return {
-				count: deviceList.length,
-				devices: deviceList.map((d) => ({
-					deviceId: d.deviceId,
-					kind: d.kind,
-					label: d.label,
-					groupId: d.groupId,
-				})),
-			};
-		});
+      return {
+        count: deviceList.length,
+        devices: deviceList.map((d) => ({
+          deviceId: d.deviceId,
+          kind: d.kind,
+          label: d.label,
+          groupId: d.groupId,
+        })),
+      };
+    });
 
-		expect(devices.count).toBeGreaterThan(0);
-		expect(Array.isArray(devices.devices)).toBe(true);
-	});
+    expect(devices.count).toBeGreaterThan(0);
+    expect(Array.isArray(devices.devices)).toBe(true);
+  });
 
-	test("all devices should be audio inputs", async ({ page }) => {
-		const allAudioInputs = await page.evaluate(async () => {
-			const { AudioRecorder } = await import("/dist/index.js");
-			const devices = await AudioRecorder.listDevices();
+  test("devices should have required properties", async ({ page }) => {
+    const devicesValid = await page.evaluate(async () => {
+      const { getDevices } = await import("/dist/index.js");
+      const devices = await getDevices();
 
-			return devices.every((d) => d.kind === "audioinput");
-		});
+      if (devices.length === 0) return false;
 
-		expect(allAudioInputs).toBe(true);
-	});
+      return devices.every(
+        (d) =>
+          typeof d.deviceId === "string" &&
+          typeof d.kind === "string" &&
+          typeof d.label === "string" &&
+          typeof d.groupId === "string",
+      );
+    });
 
-	test("devices should have required properties", async ({ page }) => {
-		const devicesValid = await page.evaluate(async () => {
-			const { AudioRecorder } = await import("/dist/index.js");
-			const devices = await AudioRecorder.listDevices();
+    expect(devicesValid).toBe(true);
+  });
 
-			if (devices.length === 0) return false;
+  test("should create recorder with specific device", async ({ page }) => {
+    const result = await page.evaluate(async () => {
+      const { getDevices, getMediaStream, Recorder } = await import(
+        "/dist/index.js"
+      );
 
-			return devices.every(
-				(d) =>
-					typeof d.deviceId === "string" &&
-					typeof d.kind === "string" &&
-					typeof d.label === "string" &&
-					typeof d.groupId === "string",
-			);
-		});
+      const devices = await getDevices();
 
-		expect(devicesValid).toBe(true);
-	});
+      if (devices.length === 0) {
+        return { success: false, reason: "no devices" };
+      }
 
-	test("should create recorder with specific device", async ({ page }) => {
-		const result = await page.evaluate(async () => {
-			const { AudioRecorder } = await import("/dist/index.js");
-			const devices = await AudioRecorder.listDevices();
+      const deviceId = devices[0].deviceId;
+      const recorder = new Recorder(await getMediaStream(), { deviceId });
 
-			if (devices.length === 0) {
-				return { success: false, reason: "no devices" };
-			}
+      try {
+        recorder.start();
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        await recorder.stop();
+        return { success: true };
+      } catch (e) {
+        return { success: false, reason: e.message };
+      }
+    });
 
-			const deviceId = devices[0].deviceId;
-			const recorder = new AudioRecorder({ deviceId });
+    expect(result.success).toBe(true);
+  });
 
-			try {
-				await recorder.start();
-				await new Promise((resolve) => setTimeout(resolve, 200));
-				await recorder.stop();
-				return { success: true };
-			} catch (e) {
-				return { success: false, reason: e.message };
-			}
-		});
+  test("should filter only audio inputs from all devices", async ({ page }) => {
+    const comparison = await page.evaluate(async () => {
+      const { getDevices } = await import("/dist/index.js");
 
-		expect(result.success).toBe(true);
-	});
+      // Get all devices
+      const allDevices = await navigator.mediaDevices.enumerateDevices();
+      const audioInputs = allDevices.filter((d) => d.kind === "audioinput");
 
-	test("should filter only audio inputs from all devices", async ({ page }) => {
-		const comparison = await page.evaluate(async () => {
-			const { AudioRecorder } = await import("/dist/index.js");
+      // Get filtered devices
+      const filteredDevices = await getDevices({ kind: "audioinput" });
 
-			// Get all devices
-			const allDevices = await navigator.mediaDevices.enumerateDevices();
-			const audioInputs = allDevices.filter((d) => d.kind === "audioinput");
+      return {
+        allDevicesCount: allDevices.length,
+        audioInputsCount: audioInputs.length,
+        filteredCount: filteredDevices.length,
+        match: audioInputs.length === filteredDevices.length,
+      };
+    });
 
-			// Get filtered devices
-			const filteredDevices = await AudioRecorder.listDevices();
-
-			return {
-				allDevicesCount: allDevices.length,
-				audioInputsCount: audioInputs.length,
-				filteredCount: filteredDevices.length,
-				match: audioInputs.length === filteredDevices.length,
-			};
-		});
-
-		expect(comparison.match).toBe(true);
-		expect(comparison.filteredCount).toBeLessThanOrEqual(
-			comparison.allDevicesCount,
-		);
-	});
+    expect(comparison.match).toBe(true);
+    expect(comparison.filteredCount).toBeLessThanOrEqual(
+      comparison.allDevicesCount,
+    );
+  });
 });
