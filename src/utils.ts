@@ -1,5 +1,5 @@
 type DeviceFilters = {
-  [key in keyof MediaDeviceInfo]: MediaDeviceInfo[key];
+	[key in keyof MediaDeviceInfo]: MediaDeviceInfo[key];
 };
 
 /**
@@ -7,17 +7,17 @@ type DeviceFilters = {
  * @returns The list of Device objects
  */
 export async function getDevices(
-  filters: Partial<DeviceFilters> = {},
+	filters: Partial<DeviceFilters> = {},
 ): Promise<MediaDeviceInfo[]> {
-  return navigator.mediaDevices
-    .enumerateDevices()
-    .then((list) =>
-      list.filter((d) =>
-        filters
-          ? Object.entries(filters).every(([key, value]) => d[key] === value)
-          : true,
-      ),
-    );
+	return navigator.mediaDevices
+		.enumerateDevices()
+		.then((list) =>
+			list.filter((d) =>
+				filters
+					? Object.entries(filters).every(([key, value]) => d[key] === value)
+					: true,
+			),
+		);
 }
 
 /**
@@ -26,7 +26,7 @@ export async function getDevices(
  * @returns The media stream
  */
 export async function getMediaStream(
-  constraints: MediaStreamConstraints = { audio: true, video: false },
+	constraints: MediaStreamConstraints = { audio: true, video: false },
 ) {
-  return navigator.mediaDevices.getUserMedia(constraints);
+	return navigator.mediaDevices.getUserMedia(constraints);
 }

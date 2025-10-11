@@ -38,7 +38,7 @@ test.describe("AudioWorklets", () => {
     const result = await page.evaluate(async () => {
       const { Recorder, getMediaStream } = await import("/dist/index.js");
 
-      const stream = getMediaStream();
+      const stream = await getMediaStream();
       const recorder = new Recorder(stream);
 
       let callbackParams = {};
