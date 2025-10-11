@@ -1,30 +1,14 @@
-type Volume = number;
+import type { Analyser } from "./analyser";
 
-interface VolumeChangeEvent {
-	volume: Volume;
-}
-
-export interface InstallWorkletVars {
-	context: AudioContext;
-	stream: MediaStream;
-	node: AudioWorkletNode;
-}
-
-export interface AudioRecorderOptions
-	extends Omit<MediaRecorderOptions, "mimeType"> {
-	deviceId?: string;
-	workletPath?: string;
+export interface MonitorOptions {
 	mimeType?: string | string[];
+	context?: AudioContext;
+	defaultAnalyser?: Analyser;
 }
 
-export interface AudioEventListenerMap {
-	volumechange: VolumeChangeEvent;
+export interface RecorderOptions
+	extends Omit<MediaRecorderOptions, "mimeType"> {
+	mimeType?: string | string[];
+	context?: AudioContext;
+	defaultAnalyser?: Analyser;
 }
-
-export type AudioEventListener<T> = (event: T) => void;
-
-export type AudioEventListeners = {
-	[k in keyof AudioEventListenerMap]?: Array<
-		AudioEventListener<AudioEventListenerMap[k]>
-	>;
-};
