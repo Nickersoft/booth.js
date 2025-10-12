@@ -9,6 +9,7 @@ export interface SetupAnalyzerArgs {
 
 export interface MonitorOptions {
 	context?: AudioContext;
+	analyserOptions?: AnalyserOptions;
 	setupAnalyser?: ((args: SetupAnalyzerArgs) => void) | false;
 }
 
@@ -27,7 +28,7 @@ export class Monitor {
 		this.context = this.#options.context ?? new AudioContext();
 		this.destination = this.context.destination;
 		this.source = this.context.createMediaStreamSource(this.stream);
-		this.analyser = new Analyser(this.context);
+		this.analyser = new Analyser(this.context, this.#options.analyserOptions);
 
 		if (options.setupAnalyser) {
 			options.setupAnalyser({
@@ -50,10 +51,31 @@ export class Monitor {
 	}
 
 	/**
-	 * Retrieves the current analyzer's frequency data
+	 * Retrieves the current analyzer's frequency data as an Uint8Array
 	 */
-	get frequencyData() {
-		return this.analyser.frequencyData;
+	get byteFrequencyData(): Uint8Array {
+		return this.analyser.byteFrequencyData;
+	}
+
+	/**
+	 * Retrieves the current analyzer's frequency data as an Float32Array
+	 */
+	get floatFrequencyData(): Float32Array {
+		return this.analyser.floatFrequencyData;
+	}
+
+	/**
+	 * Retrieves the current analyzer's time domain data as an Uint8Array
+	 */
+	get byteTimeDomainData(): Uint8Array {
+		return this.analyser.byteTimeDomainData;
+	}
+
+	/**
+	 * Retrieves the current analyzer's time domain data as an Float32Array
+	 */
+	get floatTimeDomainData(): Float32Array {
+		return this.analyser.floatTimeDomainData;
 	}
 
 	/**

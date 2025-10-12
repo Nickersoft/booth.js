@@ -21,7 +21,7 @@ test.describe("Edge Cases", () => {
 
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			const frequencyData = analyser.frequencyData;
+			const frequencyData = analyser.byteFrequencyData;
 			const volume = analyser.volume;
 
 			return {
@@ -54,7 +54,7 @@ test.describe("Edge Cases", () => {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
 			const volume1 = analyser.volume;
-			const frequencyData1 = analyser.frequencyData;
+			const frequencyData1 = analyser.byteFrequencyData;
 
 			// Resume the context
 			await context.resume();
@@ -62,7 +62,7 @@ test.describe("Edge Cases", () => {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
 			const volume2 = analyser.volume;
-			const frequencyData2 = analyser.frequencyData;
+			const frequencyData2 = analyser.byteFrequencyData;
 
 			stream.getTracks().forEach((track) => {
 				track.stop();
@@ -98,7 +98,7 @@ test.describe("Edge Cases", () => {
 					success: true,
 					fftSize: analyser.node.fftSize,
 					frequencyBinCount: analyser.node.frequencyBinCount,
-					frequencyDataLength: analyser.frequencyData.length,
+					frequencyDataLength: analyser.byteFrequencyData.length,
 				};
 			} catch (error) {
 				return {
@@ -129,7 +129,7 @@ test.describe("Edge Cases", () => {
 					success: true,
 					fftSize: analyser.node.fftSize,
 					frequencyBinCount: analyser.node.frequencyBinCount,
-					frequencyDataLength: analyser.frequencyData.length,
+					frequencyDataLength: analyser.byteFrequencyData.length,
 				};
 			} catch (error) {
 				return {
@@ -178,7 +178,7 @@ test.describe("Edge Cases", () => {
 			await new Promise((resolve) => setTimeout(resolve, 200));
 
 			const volume = analyser.volume;
-			const frequencyData = analyser.frequencyData;
+			const frequencyData = analyser.byteFrequencyData;
 
 			stream.getTracks().forEach((track) => {
 				track.stop();
@@ -270,7 +270,7 @@ test.describe("Edge Cases", () => {
 			await new Promise((resolve) => setTimeout(resolve, 200));
 
 			const volume = analyser.volume;
-			const frequencyData = analyser.frequencyData;
+			const frequencyData = analyser.byteFrequencyData;
 
 			stream1.getTracks().forEach((track) => {
 				track.stop();

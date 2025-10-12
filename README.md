@@ -84,7 +84,7 @@ function showVolume() {
 }
 
 function showWaveform() {
-  const frequencyData = monitor.frequencyData;
+  const frequencyData = monitor.byteTimeDomainData;
   // Some kind of drawing code...
   requestAnimationFrame(showWaveform);
 }

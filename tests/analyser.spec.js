@@ -131,7 +131,7 @@ test.describe("Analyser", () => {
 			// Allow some time for audio processing
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
-			const frequencyData = analyser.frequencyData;
+			const frequencyData = analyser.byteFrequencyData;
 
 			return {
 				isUint8Array: frequencyData instanceof Uint8Array,
@@ -325,7 +325,7 @@ test.describe("Monitor with Default Analyser", () => {
 			// Allow some time for audio processing
 			await new Promise((resolve) => setTimeout(resolve, 100));
 
-			const frequencyData = monitor.frequencyData;
+			const frequencyData = monitor.byteFrequencyData;
 
 			return {
 				isUint8Array: frequencyData instanceof Uint8Array,
@@ -417,8 +417,8 @@ test.describe("Monitor with Default Analyser", () => {
 
 			// Get multiple frequency data readings
 			await new Promise((resolve) => setTimeout(resolve, 100));
-			const data1 = monitor.frequencyData;
-			const data2 = monitor.frequencyData;
+			const data1 = monitor.byteFrequencyData;
+			const data2 = monitor.byteFrequencyData;
 
 			return {
 				sameLength: data1.length === data2.length,

@@ -22,8 +22,8 @@ test.describe("Integration Tests", () => {
 
 			const monitorVolume = monitor.volume;
 			const recorderVolume = recorder.volume;
-			const monitorFreqData = monitor.frequencyData;
-			const recorderFreqData = recorder.frequencyData;
+			const monitorFreqData = monitor.byteFrequencyData;
+			const recorderFreqData = recorder.byteFrequencyData;
 
 			const blob = await recorder.stop();
 
@@ -524,7 +524,7 @@ test.describe("Resource Management Tests", () => {
 						await new Promise((resolve) => setTimeout(resolve, 200));
 
 						const volume = monitor.volume;
-						const frequencyData = monitor.frequencyData;
+						const frequencyData = monitor.byteFrequencyData;
 						const blob = await recorder.stop();
 
 						stream.getTracks().forEach((track) => {
