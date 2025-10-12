@@ -1,8 +1,15 @@
 import { Analyser } from "./analyser.js";
 
+export interface SetupAnalyzerArgs {
+	analyser: Analyser;
+	source: MediaStreamAudioSourceNode;
+	destination: AudioDestinationNode;
+	context: AudioContext;
+}
+
 export interface MonitorOptions {
 	context?: AudioContext;
-	defaultAnalyser?: Analyser;
+	setupAnalyser?: ((args: SetupAnalyzerArgs) => void) | false;
 }
 
 export class Monitor {
@@ -20,9 +27,19 @@ export class Monitor {
 		this.context = this.#options.context ?? new AudioContext();
 		this.destination = this.context.destination;
 		this.source = this.context.createMediaStreamSource(this.stream);
-		this.analyser = this.#options.defaultAnalyser ?? new Analyser(this.context);
-		this.source.connect(this.analyser.node);
-		this.analyser.connect(this.destination);
+		this.analyser = new Analyser(this.context);
+
+		if (options.setupAnalyser) {
+			options.setupAnalyser({
+				analyser: this.analyser,
+				source: this.source,
+				destination: this.destination,
+				context: this.context,
+			});
+		} else if (options.setupAnalyser !== false) {
+			this.source.connect(this.analyser.node);
+			this.analyser.connectToDestination();
+		}
 	}
 
 	/**

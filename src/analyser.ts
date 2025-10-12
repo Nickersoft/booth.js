@@ -62,6 +62,10 @@ export class Analyser {
 		return Math.sqrt(sum / data.length);
 	}
 
+	connectToDestination() {
+		this.node.connect(this.context.destination);
+	}
+
 	connect(
 		destinationNode: AudioNode,
 		output?: number,
