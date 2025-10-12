@@ -1,6 +1,8 @@
 import { Monitor, type MonitorOptions } from "./monitor.js";
 
-export interface RecorderOptions extends MonitorOptions {
+export interface RecorderOptions
+	extends Omit<MediaRecorderOptions, "mimeType">,
+		MonitorOptions {
 	mimeType?: string | string[];
 }
 

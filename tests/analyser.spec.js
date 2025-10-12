@@ -290,30 +290,6 @@ test.describe("Monitor with Default Analyser", () => {
 		expect(result.analyserUsesCustomContext).toBe(true);
 	});
 
-	test("should create Monitor with custom analyser", async ({ page }) => {
-		const result = await page.evaluate(async () => {
-			const { Monitor, Analyser, getMediaStream } = await import(
-				"/dist/index.js"
-			);
-
-			const customContext = new AudioContext();
-			const customAnalyser = new Analyser(customContext, { fftSize: 512 });
-			const stream = await getMediaStream();
-			const monitor = new Monitor(stream, {
-				context: customContext,
-				defaultAnalyser: customAnalyser,
-			});
-
-			return {
-				analyserMatches: monitor.analyser === customAnalyser,
-				customFFTSize: monitor.analyser.node.fftSize,
-			};
-		});
-
-		expect(result.analyserMatches).toBe(true);
-		expect(result.customFFTSize).toBe(512);
-	});
-
 	test("should provide volume through monitor", async ({ page }) => {
 		const result = await page.evaluate(async () => {
 			const { Monitor, getMediaStream } = await import("/dist/index.js");

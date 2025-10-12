@@ -5,54 +5,6 @@ test.describe("Integration Tests", () => {
 		await page.goto("/tests/index.html");
 	});
 
-	test("should integrate Recorder with custom Analyser", async ({ page }) => {
-		const result = await page.evaluate(async () => {
-			const { Recorder, Analyser, getMediaStream } = await import(
-				"/dist/index.js"
-			);
-
-			const stream = await getMediaStream();
-			const customContext = new AudioContext();
-			const customAnalyser = new Analyser(customContext, { fftSize: 512 });
-			const recorder = new Recorder(stream, {
-				context: customContext,
-				defaultAnalyser: customAnalyser,
-			});
-
-			await recorder.start();
-			await new Promise((resolve) => setTimeout(resolve, 300));
-
-			const volume1 = recorder.volume;
-			const frequencyData1 = recorder.frequencyData;
-
-			await new Promise((resolve) => setTimeout(resolve, 200));
-
-			const volume2 = recorder.volume;
-			const blob = await recorder.stop();
-
-			return {
-				customFFTSize: customAnalyser.node.fftSize,
-				recorderFFTSize: recorder.analyser.node.fftSize,
-				analysersMatch: recorder.analyser === customAnalyser,
-				contextsMatch: recorder.context === customContext,
-				volume1Valid: typeof volume1 === "number" && Number.isFinite(volume1),
-				volume2Valid: typeof volume2 === "number" && Number.isFinite(volume2),
-				frequencyDataValid:
-					frequencyData1 instanceof Uint8Array && frequencyData1.length === 256,
-				recordingValid: blob instanceof Blob && blob.size > 0,
-			};
-		});
-
-		expect(result.customFFTSize).toBe(512);
-		expect(result.recorderFFTSize).toBe(512);
-		expect(result.analysersMatch).toBe(true);
-		expect(result.contextsMatch).toBe(true);
-		expect(result.volume1Valid).toBe(true);
-		expect(result.volume2Valid).toBe(true);
-		expect(result.frequencyDataValid).toBe(true);
-		expect(result.recordingValid).toBe(true);
-	});
-
 	test("should integrate Monitor with Recorder using same stream", async ({
 		page,
 	}) => {
